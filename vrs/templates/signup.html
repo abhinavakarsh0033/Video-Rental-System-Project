@@ -37,32 +37,15 @@
         }
 
         .card{
-        height: 320px;
+        height: 370px;
         margin-top: auto;
         margin-bottom: auto;
         width: 400px;
         background-color: rgba(0,0,0,0.5) !important;
         }
 
-        .social_icon span{
-        font-size: 60px;
-        margin-left: 10px;
-        color: #FFC312;
-        }
-
-        .social_icon span:hover{
-        color: white;
-        cursor: pointer;
-        }
-
         .card-header h3{
         color: white;
-        }
-
-        .social_icon{
-        position: absolute;
-        right: 20px;
-        top: -45px;
         }
 
         .input-group-prepend span{
@@ -76,6 +59,10 @@
         outline: 0 0 0 0  !important;
         box-shadow: 0 0 0 0 !important;
 
+        }
+
+        .fa-phone{
+            transform: scaleX(-1);
         }
 
         .login_btn{
@@ -102,32 +89,46 @@
 <div class="container">
 	<div class="d-flex justify-content-center h-100">
 		<div class="card">
-			<div class="card-header">
-				<h3>Sign In</h3>
+			<div class="card-header pb-1">
+				<h3>Sign Up</h3>
 			</div>
 			<div class="card-body">
-				<form>
-					<div class="input-group form-group">
+				<form method="post">
+                    <div class="input-group form-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-user"></i></span>
 						</div>
-						<input type="text" class="form-control" placeholder="email">
+						<input type="text" class="form-control" placeholder="Name">
+						
+					</div>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+						</div>
+						<input type="text" class="form-control" placeholder="E-mail">
 						
 					</div>
 					<div class="input-group form-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-key"></i></span>
 						</div>
-						<input type="password" class="form-control" placeholder="password">
+						<input type="password" class="form-control" placeholder="Password">
+					</div>
+                    <div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-phone"></i></span>
+						</div>
+						<input type="text" class="form-control" placeholder="Phone">
+						
 					</div>
 					<div class="form-group">
-						<button type="submit" class="btn float-center login_btn" formaction="/services">Login</button>
+						<button type="submit" class="btn float-center login_btn" formaction="/">Register</button>
 					</div>
 				</form>
 			</div>
 			<div class="card-footer">
 				<div class="d-flex justify-content-center links">
-					Don't have an account?<a href="/signup">Sign Up</a>
+					Already have an account?<a href="/">Sign In</a>
 				</div>
 			</div>
 		</div>
