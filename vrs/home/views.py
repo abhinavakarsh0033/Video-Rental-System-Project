@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
+from home.models import UserProfile
 
 
 # Create your views here.
@@ -23,18 +24,24 @@ def index(request):
 
 def signup(request):
     if request.method=='POST':
-        form=UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # username = form.cleaned_data.get('username')
-            # password = form.cleaned_data.get('password1')
-            # user = authenticate(username=username,password=password)
-            messages.success(request, 'Account was created successfully')
-            return redirect('/')
-    else:
-        form = UserCreationForm()
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        phone = request.POST.get('phone')
 
-    return render(request,'signup.html',{'form':form})
+        firstname = name.split(' ')[0]
+        lastname = ''
+        for i in range(1,len(name.split(' '))):
+            lastname = lastname + ' ' + name.split(' ')[i]
+       
+        user = User.objects.create_user(username=email, email=email, password=password, first_name=firstname, last_name=lastname)
+        user.save()
+        userprofile = UserProfile(user=user,phone=phone)
+        userprofile.save()
+
+        messages.success(request, 'Your account has been created!')
+        return redirect('/')
+    return render(request,'signup.html')
 
 def about(request):
     return render(request,'about.html')
@@ -49,6 +56,5 @@ def contact(request):
     return render(request,'contact.html')
 
 def signout(request):
-    print(1)
     logout(request)
     return redirect('/')
