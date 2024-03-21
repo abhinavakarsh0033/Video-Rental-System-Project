@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from home.models import UserProfile
+from home.models import Movie
 
 
 # Create your views here.
@@ -49,8 +50,19 @@ def about(request):
 def home(request):
     print(request.user)
     if request.user.is_anonymous:
-        return redirect('/')
-    return render(request,'home.html')
+        return redirect('/')\
+    
+    movies = Movie.objects.all()
+    moviesets = []
+    set5 = []
+    for movie in movies:
+        set5.append(movie)
+        if len(set5)==2:
+            moviesets.append(set5)
+            set5 = []
+
+    params={'range1':moviesets[0],'range2':moviesets[1:]}
+    return render(request,'home.html',params)
 
 def contact(request):
     return render(request,'contact.html')
