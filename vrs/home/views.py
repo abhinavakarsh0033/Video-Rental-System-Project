@@ -81,8 +81,8 @@ def action(request):
             moviesets.append(set4)
             set4 = []
     moviesets.append(set4)
-    params = {'moviesets':moviesets}
-    return render(request,'action.html',params)
+    params = {'moviesets':moviesets, 'title':'Action Movies', 'heading':'Action Movies'}
+    return render(request,'display.html',params)
 
 def comedy(request):
     comedy_movies = Movie.objects.filter(movie_genre='Comedy')
@@ -94,8 +94,8 @@ def comedy(request):
             moviesets.append(set4)
             set4 = []
     moviesets.append(set4)
-    params = {'moviesets':moviesets}
-    return render(request,'comedy.html',params)
+    params = {'moviesets':moviesets, 'title':'Comedy Movies', 'heading':'Comedy Movies'}
+    return render(request,'display.html',params)
 
 def drama(request):
     drama_movies = Movie.objects.filter(movie_genre='Drama')
@@ -107,8 +107,8 @@ def drama(request):
             moviesets.append(set4)
             set4 = []
     moviesets.append(set4)
-    params = {'moviesets':moviesets}
-    return render(request,'drama.html',params)
+    params = {'moviesets':moviesets, 'title':'Drama Movies', 'heading':'Drama Movies'}
+    return render(request,'display.html',params)
 
 def horror(request):
     horror_movies = Movie.objects.filter(movie_genre='Horror')
@@ -120,8 +120,8 @@ def horror(request):
             moviesets.append(set4)
             set4 = []
     moviesets.append(set4)
-    params = {'moviesets':moviesets}
-    return render(request,'horror.html',params)
+    params = {'moviesets':moviesets, 'title':'Horror Movies', 'heading':'Horror Movies'}
+    return render(request,'display.html',params)
 
 def romance(request):
     romance_movies = Movie.objects.filter(movie_genre='Romance')
@@ -133,8 +133,8 @@ def romance(request):
             moviesets.append(set4)
             set4 = []
     moviesets.append(set4)
-    params = {'moviesets':moviesets}
-    return render(request,'romance.html',params)
+    params = {'moviesets':moviesets, 'title':'Romance Movies', 'heading':'Romance Movies'}
+    return render(request,'display.html',params)
 
 def thriller(request):
     thriller_movies = Movie.objects.filter(movie_genre='Thriller')
@@ -146,8 +146,8 @@ def thriller(request):
             moviesets.append(set4)
             set4 = []
     moviesets.append(set4)
-    params = {'moviesets':moviesets}
-    return render(request,'thriller.html',params)
+    params = {'moviesets':moviesets, 'title':'Thriller Movies', 'heading':'Thriller Movies'}
+    return render(request,'display.html',params)
 
 def search(request):
     query = request.GET.get('search')
@@ -164,5 +164,5 @@ def search(request):
             moviesets.append(set4)
             set4 = []
     moviesets.append(set4)
-    params = {'moviesets':moviesets, 'query':query}
-    return render(request,'search.html',params)
+    params = {'moviesets':moviesets, 'title':'Search Results', 'heading':"Search Results for '"+query+"'"}
+    return render(request,'display.html',params)
