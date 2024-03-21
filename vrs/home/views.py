@@ -70,3 +70,81 @@ def contact(request):
 def signout(request):
     logout(request)
     return redirect('/')
+
+def action(request):
+    action_movies = Movie.objects.filter(movie_genre='Action')
+    moviesets = []
+    set4 = []
+    for movie in action_movies:
+        set4.append(movie)
+        if len(set4)==4:
+            moviesets.append(set4)
+            set4 = []
+    moviesets.append(set4)
+    params = {'moviesets':moviesets}
+    return render(request,'action.html',params)
+
+def comedy(request):
+    comedy_movies = Movie.objects.filter(movie_genre='Comedy')
+    moviesets = []
+    set4 = []
+    for movie in comedy_movies:
+        set4.append(movie)
+        if len(set4)==4:
+            moviesets.append(set4)
+            set4 = []
+    moviesets.append(set4)
+    params = {'moviesets':moviesets}
+    return render(request,'comedy.html',params)
+
+def drama(request):
+    drama_movies = Movie.objects.filter(movie_genre='Drama')
+    moviesets = []
+    set4 = []
+    for movie in drama_movies:
+        set4.append(movie)
+        if len(set4)==4:
+            moviesets.append(set4)
+            set4 = []
+    moviesets.append(set4)
+    params = {'moviesets':moviesets}
+    return render(request,'drama.html',params)
+
+def horror(request):
+    horror_movies = Movie.objects.filter(movie_genre='Horror')
+    moviesets = []
+    set4 = []
+    for movie in horror_movies:
+        set4.append(movie)
+        if len(set4)==4:
+            moviesets.append(set4)
+            set4 = []
+    moviesets.append(set4)
+    params = {'moviesets':moviesets}
+    return render(request,'horror.html',params)
+
+def romance(request):
+    romance_movies = Movie.objects.filter(movie_genre='Romance')
+    moviesets = []
+    set4 = []
+    for movie in romance_movies:
+        set4.append(movie)
+        if len(set4)==4:
+            moviesets.append(set4)
+            set4 = []
+    moviesets.append(set4)
+    params = {'moviesets':moviesets}
+    return render(request,'romance.html',params)
+
+def thriller(request):
+    thriller_movies = Movie.objects.filter(movie_genre='Thriller')
+    moviesets = []
+    set4 = []
+    for movie in thriller_movies:
+        set4.append(movie)
+        if len(set4)==4:
+            moviesets.append(set4)
+            set4 = []
+    moviesets.append(set4)
+    params = {'moviesets':moviesets}
+    return render(request,'thriller.html',params)
