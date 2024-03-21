@@ -148,3 +148,21 @@ def thriller(request):
     moviesets.append(set4)
     params = {'moviesets':moviesets}
     return render(request,'thriller.html',params)
+
+def search(request):
+    query = request.GET.get('search')
+    allMovies = Movie.objects.all()
+    movies = []
+    for movie in allMovies:
+        if query.lower() in movie.movie_title.lower() or query.lower() in movie.movie_genre.lower() or query.lower() in movie.movie_cast.lower():
+            movies.append(movie)
+    moviesets = []
+    set4 = []
+    for movie in movies:
+        set4.append(movie)
+        if len(set4)==4:
+            moviesets.append(set4)
+            set4 = []
+    moviesets.append(set4)
+    params = {'moviesets':moviesets, 'query':query}
+    return render(request,'search.html',params)

@@ -15,4 +15,5 @@ urlpatterns = [
     path("horror",views.horror,name='horror'),
     path("romance",views.romance,name='romance'),
     path("thriller",views.thriller,name='thriller'),
+    path("search",views.search,name='search'),
 ]
