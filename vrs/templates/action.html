@@ -8,7 +8,7 @@ Action Movies
         h5.card-title {
             margin-bottom: 0;
         }
-        
+
     </style>
 <h1>Action Movies</h1>
 
@@ -16,7 +16,7 @@ Action Movies
     <div class="card-group">
         {% for movie in i %}
         <div class="card">
-        <img src='/static/{{movie.movie_img}}' class="card-img-top" alt="...">
+        <img src='/media/{{movie.movie_img}}' class="card-img-top" alt="...">
         <div class="card-body">
             <h5 class="card-title">{{movie.movie_title}}</h5>
             <p class="card-text"><small class="text-muted">{{movie.movie_release_year.year}}</small></p>

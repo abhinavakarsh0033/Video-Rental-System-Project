@@ -57,7 +57,7 @@ def home(request):
     set5 = []
     for movie in movies:
         set5.append(movie)
-        if len(set5)==2:
+        if len(set5)==5:
             moviesets.append(set5)
             set5 = []
 
