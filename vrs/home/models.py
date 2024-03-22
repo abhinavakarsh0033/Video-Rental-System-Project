@@ -44,3 +44,13 @@ class Cart_Item(models.Model):
 
     def __str__(self):
         return str(self.user) + ' ' + str(self.movie)    
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.ManyToManyField(Cart_Item)
+    total_price = models.IntegerField()
+    order_date = models.DateTimeField(auto_now_add=True)
+    order_id = models.AutoField(primary_key=True)
+
+    def __str__(self):
+        return str(self.user) + ' ' + str(self.order_date)
