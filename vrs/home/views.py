@@ -193,3 +193,6 @@ def add_to_cart(request,id):
     print(all_cart_items)
     return redirect('/movie/'+str(id))
 
+def cart(request):
+    return render(request,'cart.html')
+

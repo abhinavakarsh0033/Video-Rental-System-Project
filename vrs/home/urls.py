@@ -18,5 +18,5 @@ urlpatterns = [
     path("search",views.search,name='search'),
     path("movie/<int:id>",views.movie,name='movie'),
     path("add_to_cart/<int:id>",views.add_to_cart,name='add_to_cart'),
-
+    path("cart",views.cart,name='cart'),
 ]
