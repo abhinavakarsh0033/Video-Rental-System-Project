@@ -84,7 +84,7 @@
       <div class="col-7 ">
         <button type="button" class="btn btn-dark btn-lg">Rent ₹{{movie.movie_rent_price}} </button>
         <button type="button" class="btn btn-dark btn-lg">Buy ₹{{movie.movie_buy_price}}</button>
-        <button style = "width: 10%;" type="button" class="btn btn-dark btn-lg"><i class="fas fa-cart-plus"  style="scale: 1.25;"></i></button>
+        <a style = "width: 10%;" type="button"  class="btn btn-dark btn-lg" href="/add_to_cart/{{movie.movie_id}}" ><i class="fas fa-cart-plus"  style="scale: 1.25;"></i></a>
       </div>
   </div>
 </div>

@@ -143,7 +143,9 @@ Home
       <div class="card-group">
         {% for j in range1 %}
         <div class="card">
+          <a href="/movie/{{j.movie_id}}">
           <img src="media/{{j.movie_img}}" class="card-img-top" id = "movieimage" alt="no image" onerror="this.src='static/noposter.png';"> 
+        </a>
           <div class="card-body">
             <h5 class="card-title"> {{j.movie_title}} </h5>
             <p class="card-text"><small id = "god" class = "text-muted"> {{j.movie_runtime}}</small></p>
@@ -158,7 +160,9 @@ Home
       <div class="card-group">
         {% for j in i %}
         <div class="card">
+          <a href="/movie/{{j.movie_id}}">
           <img src="media/{{j.movie_img}}" class="card-img-top" id = "movieimage" alt="no image" onerror="this.src='static/noposter.png';"> 
+        </a>
           <div class="card-body">
             <h5 class="card-title">{{j.movie_title}}</h5>
             <p class="card-text"><small id = "god" class = "text-muted"> {{j.movie_runtime}}</small></p>

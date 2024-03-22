@@ -7,6 +7,7 @@ from django.contrib import messages
 from home.models import UserProfile
 from home.models import Movie
 from random import shuffle
+from home.models import Cart_Item
 
 
 # Create your views here.
@@ -49,7 +50,8 @@ def about(request):
 
 def home(request):
     if request.user.is_anonymous:
-        return redirect('/')\
+        return redirect('/')
+    #changed
     
     movies = Movie.objects.all()
     movies = list(movies)
@@ -176,3 +178,18 @@ def movie(request,id):
     minutes = (movie[0].movie_runtime.seconds//60)%60
     params = {'movie':movie[0], 'hours':hours, 'minutes':minutes}
     return render(request,'movie.html',params)
+
+def add_to_cart(request,id):
+    movie = Movie.objects.filter(movie_id=id)
+    cart_item = Cart_Item(user=request.user,movie=movie[0])
+    # print(cart_item)
+    all_cart_items = Cart_Item.objects.filter(user=request.user,movie=movie[0])
+    if len(all_cart_items)==0:
+        cart_item.save()
+        # alert the user that the movie has been added to the cart
+    else:
+        # alert the user that the movie is already in the cart
+        pass
+    print(all_cart_items)
+    return redirect('/movie/'+str(id))
+
