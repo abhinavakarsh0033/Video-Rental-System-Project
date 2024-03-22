@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from home.models import UserProfile
 from home.models import Movie
+from random import shuffle
 
 
 # Create your views here.
@@ -14,7 +15,6 @@ def index(request):
         return redirect('/home')
     if request.method=='POST':
         user = authenticate(username=request.POST.get('email'),password=request.POST.get('password'))
-        print(request.POST.get('email'), request.POST.get('password'))
         if user is not None:
             login(request, user)
             return redirect('/home')    
@@ -48,11 +48,12 @@ def about(request):
     return render(request,'about.html')
 
 def home(request):
-    print(request.user)
     if request.user.is_anonymous:
         return redirect('/')\
     
     movies = Movie.objects.all()
+    movies = list(movies)
+    shuffle(movies)
     moviesets = []
     set5 = []
     for movie in movies:
@@ -166,3 +167,10 @@ def search(request):
     moviesets.append(set4)
     params = {'moviesets':moviesets, 'title':'Search Results', 'heading':"Search Results for '"+query+"'"}
     return render(request,'display.html',params)
+
+def movie(request,id):
+    movie = Movie.objects.filter(movie_id=id)
+    if(len(movie)==0):
+        return redirect('/')
+    params = {'movie':movie[0], 'title':movie[0].movie_title}
+    return render(request,'movie.html',params)
