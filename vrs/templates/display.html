@@ -61,7 +61,7 @@
     <div class="card-group" style = "width: {% widthratio i|length 1 25 %}%; padding-left: {% widthratio i|length 3 30 %}px; padding-right: {% widthratio i|length 3 30 %}px;">
         {% for movie in i %}
         <div class="card">
-        <img id="movieimage" src='/media/{{movie.movie_img}}' class="card-img-top" alt="...">
+        <img id="movieimage" src='/media/{{movie.movie_img}}' class="card-img-top" alt="no image" onerror="this.src='static/noposter.png';">
         <div class="card-body">
             <h5 class="card-title">{{movie.movie_title}}</h5>
             <p class="card-text"><small class="text-muted">{{movie.movie_release_year.year}}</small></p>
