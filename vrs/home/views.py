@@ -172,5 +172,7 @@ def movie(request,id):
     movie = Movie.objects.filter(movie_id=id)
     if(len(movie)==0):
         return redirect('/')
-    params = {'movie':movie[0], 'title':movie[0].movie_title}
+    hours = movie[0].movie_runtime.seconds//3600
+    minutes = (movie[0].movie_runtime.seconds//60)%60
+    params = {'movie':movie[0], 'hours':hours, 'minutes':minutes}
     return render(request,'movie.html',params)
