@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html>
+<head><!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+        col-sm-2.col-form-label{
+            text-align: center;
+            width: 10%;
+        }
+        .form-control{
+            width: 10%;
+        }
+    </style>
+	<title>Payment</title>
+</head>
+<body style = "text-align: center">
+    {% comment %} <h1>XYZ NetBanking</h1> {% endcomment %}
+    <h1>Payment Form</h1>
+
+    <form>
+        {% comment %} <p>Required field are followed by*</p> {% endcomment %}
+        <h2>Contact information</h2>
+        <p>Name:*<input type="text" name="name" required=""></p>
+        {% comment %} <fieldset> {% endcomment %}
+       <p>Email:* <input type="email" name="email" id="email" value="" required="" /></p> 
+       <p>Password:* <input type="number" name="password" id="password" value="" required="" /></p>
+      {% comment %} <hr> {% endcomment %}
+      <h2>Payment Information</h2>
+      <p>Card Type:*
+        <select name="card_type" id="card_type" required="">
+          <option value="">---selecr a Card type--</option>
+          <option value="visa">Visa</option>
+          <option value="rupy">Rupay</option>
+          <option value="master card">Master Card</option>        
+        </select>    
+      </p>
+      <p>
+        Card Number *<input type="number" name="card Number" id="Card Number" required="">
+      </p>
+      <p>
+        Expiration Date:* <input type="date" name="exp_date" id="exp_date" required="">
+      </p>
+      <p>
+        CVV * <input type="password" name="CVV" id="CVV" required="">
+      </p>
+      <input type="submit" name="" id="" value="Pay Now" />
+     
+      </form>
+</body>
+</html>

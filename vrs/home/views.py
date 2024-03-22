@@ -193,6 +193,15 @@ def add_to_cart(request,id):
     print(all_cart_items)
     return redirect('/movie/'+str(id))
 
+def remove_from_cart(request,id):
+    movie = Movie.objects.filter(movie_id=id)
+    cart_item = Cart_Item.objects.filter(user=request.user,movie=movie[0])
+    cart_item.delete()
+    return redirect('/cart')
+
 def cart(request):
     return render(request,'cart.html')
+
+def payment(request):
+    return render(request,'payment.html')    
 
