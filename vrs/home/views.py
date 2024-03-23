@@ -194,7 +194,7 @@ def add_to_cart(request,id):
         messages.success(request, 'Movie added to cart!')
     else:
         # alert the user that the movie is already in the cart
-        messages.error(request, 'Movie already in cart!')
+        messages.warning(request, 'Movie already in cart!')
         pass
     print(all_cart_items)
     return redirect('/movie/'+str(id))
@@ -208,21 +208,21 @@ def remove_from_cart(request,id):
 
 def cart(request):
     cart_items = Cart_Item.objects.filter(user=request.user)
-    total_price = 0
+    total_price = 0.0
     for item in cart_items:
         if item.isrented:
             total_price += item.movie.movie_rent_price
         else:
             total_price += item.movie.movie_buy_price
-    params = {'cart_items':cart_items, 'total_price':total_price}
+    tax = total_price*0.18
+    final_price = total_price + tax
+    params = {'cart_items':cart_items, 'total_price':total_price, 'tax':tax, 'final_price':final_price}
     return render(request,'cart.html',params)
 
-def carttoggle(request,id):
-    cart_item = Cart_Item.objects.filter(user=request.user,movie__movie_id=id)
-    if len(cart_item)==0:
-        return redirect('/cart')
+def carttoggle(request, id, flag):
+    cart_item = Cart_Item.objects.filter(user=request.user,movie = Movie.objects.filter(movie_id=id)[0])
     cart_item = cart_item[0]
-    cart_item.isrented = not cart_item.isrented
+    cart_item.isrented = bool(flag)
     cart_item.save()
     return redirect('/cart')
 

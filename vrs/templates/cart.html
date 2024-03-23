@@ -42,28 +42,9 @@ Cart
 </style>
 
 <script>
-    function showAlert(value) {
-        console.log(value)
-        if (value == "rent") {
-            $ajax({
-                type: "POST",
-                data: {csrfmiddlewaretoken: '{{ csrf_token }}',
-                      text: "this is my test view"},   /* Passing the text data */
-                success:  function(response){
-                       alert(response);
-                   }
-            });
-        } else {
-            $ajax({
-                type: "POST",
-                data: {csrfmiddlewaretoken: '{{ csrf_token }}',
-                      text: "this is my test view"},   /* Passing the text data */
-                success:  function(response){
-                       alert(response);
-                   }
-            });
-        }
-        
+    function showAlert(id, flag) {
+        console.log(id, flag);
+        window.location.href = "/carttoggle/" + id + "/" + flag + "/";
     }
 </script>
 
@@ -98,12 +79,21 @@ Cart
                       <div class="col-md-3 col-lg-3 col-xl-2">
                         
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                          {% if items.isrented == 1 %}
                             <label class="btn btn-outline-dark active">
-                              <input type="radio" name="options" id="rent" onclick="showAlert(this.id)" checked>Rent
+                              <input type="radio" name="options" id="rent" onclick="showAlert({{items.movie.movie_id}}, 1)" checked>Rent
                             </label>
                             <label class="btn btn-outline-dark">
-                              <input type="radio" name="options" id="buy" onclick="showAlert(this.id)"> Buy
+                              <input type="radio" name="options" id="buy" onclick="showAlert({{items.movie.movie_id}}, 0)"> Buy
                             </label>
+                          {% else %}
+                            <label class="btn btn-outline-dark">
+                              <input type="radio" name="options" id="rent" onclick="showAlert({{items.movie.movie_id}}, 1)">Rent
+                            </label>
+                            <label class="btn btn-outline-dark active">
+                              <input type="radio" name="options" id="buy" onclick="showAlert({{items.movie.movie_id}}, 0)" checked> Buy
+                            </label>
+                          {% endif %}
                           </div>
                       </div>
 
@@ -117,7 +107,7 @@ Cart
                         </h6>
                       </div>
                       <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                        <a href="#!" class="text-muted"><i class="fas fa-times"></i></a>
+                        <a href="/remove_from_cart/{{items.movie.movie_id}}/" class="text-muted"><i class="fas fa-times"></i></a>
                       </div>
                     </div>
   
@@ -128,43 +118,50 @@ Cart
                 </div>
                 <div class="col-lg-4 bg-grey">
                   <div class="p-5">
-                    <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
-                    <hr class="my-4">
+                    <h3 class="fw-bold mb-5 mt-2 pt-1">Bill Summary</h3>
+
+                    <div class="d-flex justify-content-between mb-0">
+                      <h5 class="text-black font-weight-bold">Movie</h5>
+                      <h5 class = "font-weight-bold">Price</h5>
+                    </div>
+
+                    <hr class="my-2">
+
+                    {% for item in cart_items %}
+                    <div class="d-flex justify-content-between mb-1">
+                      <h5 class="text-black">{{item.movie.movie_title}}</h5>
+                      <h5>
+                        ₹{% if item.isrented == 0 %}
+                            {{item.movie.movie_buy_price}}
+                            {% else %}
+                            {{item.movie.movie_rent_price}}
+                            {% endif %}
+                      </h5>
+                    </div>
+                    {% endfor %}
+
+                    <hr class="my-2">
   
-                    <div class="d-flex justify-content-between mb-4">
-                      <h5 class="text-uppercase">items 3</h5>
-                      <h5>€ 132.00</h5>
+                    <div class="d-flex justify-content-between mb-1">
+                      <h5 class="text-black font-weight-bold">Total</h5>
+                      <h5>₹{{total_price}}</h5>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                      <h5 class="text-black font-weight-bold">Tax</h5>
+                      <h5>₹{{tax}}</h5>
                     </div>
   
-                    <h5 class="text-uppercase mb-3">Shipping</h5>
-  
-                    <div class="mb-4 pb-2">
-                      <select class="select">
-                        <option value="1">Standard-Delivery- €5.00</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                        <option value="4">Four</option>
-                      </select>
-                    </div>
-  
-                    <h5 class="text-uppercase mb-3">Give code</h5>
-  
-                    <div class="mb-5">
-                      <div class="form-outline">
-                        <input type="text" id="form3Examplea2" class="form-control form-control-lg" />
-                        <label class="form-label" for="form3Examplea2">Enter your code</label>
-                      </div>
-                    </div>
-  
-                    <hr class="my-4">
+                    <hr class="my-2">
   
                     <div class="d-flex justify-content-between mb-5">
-                      <h5 class="text-uppercase">Total price</h5>
-                      <h5>€ 137.00</h5>
+                      <h5 class="text-uppercase font-weight-bold">Total price</h5>
+                      <h5>₹{{final_price}}</h5>
                     </div>
-  
+                    <a href="/payment">
                     <button type="button" class="btn btn-dark btn-block btn-lg"
-                      data-mdb-ripple-color="dark">Register</button>
+                      data-mdb-ripple-color="dark">Place Order</button>
+                    </a>
   
                   </div>
                 </div>
