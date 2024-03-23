@@ -95,7 +95,6 @@
 </head>
 
 <body>
-       
 <div class="container">
     {% if form.errors %}
     <p> There are some errors in the form. Please correct them and try again.</p>
@@ -106,7 +105,7 @@
 				<h3>Sign Up</h3>
 			</div>
 			<div class="card-body">
-				<form method="post" action = "/signup" >
+				<form method="post" action = "{% url 'signup' %}" >
                     {% csrf_token %}
                     <div class="input-group form-group">
 						<div class="input-group-prepend">
