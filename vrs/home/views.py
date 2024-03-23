@@ -279,3 +279,14 @@ def decrease(request,id):
         movie.save()
     return redirect('/staff/home')
 
+def stafforders(request,type):
+    if type=='rented':
+        orders = Order.objects.filter(isrented=True)
+    elif type=='bought':
+        orders = Order.objects.filter(isrented=False)
+    elif type=='all':
+        orders = Order.objects.all()
+    #sorting based on order_id
+    orders = sorted(orders, key=lambda x: x.order_id, reverse=True)
+    params = {'orders':orders, 'type':type.capitalize()}
+    return render(request,'stafforders.html',params)

@@ -1,6 +1,6 @@
 {% extends "staffbase.html" %}
 {% block title %}
-Cart
+Orders
 {% endblock title %}
 {% block body %}
 
@@ -30,35 +30,30 @@ Cart
                 <div class="card-body p-4 text-white">
       
                   <div class="text-center pt-1 pb-2">
-                    <h2 class="my-4">Customer Orders</h2>
+                    <h2 class="my-4">Customer Orders - {{type}}</h2>
                   </div>
       
                   <table class="table text-white mb-0" >
                     <thead>
                       <tr>
-                        <th scope="col">Movie Title</th>
-                        <th scope="col">Quantity Rented</th>
-                        <th scope="col">Availability</th>
-                        <th scope="col">Add</th>
+                        <th scope="col">Order Id</th>
+                        <th scope="col">Movie</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Order Date</th>
+                        <th scope="col">Due Date</th>
+                        <th scope="col">Status</th>
                       </tr>
                     </thead>
                     <div  style = " margin: 5px; border-radius: 10px;">
-                      {% for i in "loveaparna" %}
+                      {% comment %} {% for i in "loveaparna" %} {% endcomment %}
+                      {% for order in orders %}
                     </tr>
                     <tr class="fw-normal">
                       <th class="border-0">
-                        <span class="ms-2 text-white">Ben Smith</span>
+                        <span class="ms-2 text-white">{{order.id}}</span>
                       </th>
                       <td class="border-0 align-middle">Ask</td>
-                      <td class="border-0 align-middle">
-                        <h6 class="mb-0"><span class="badge bg-success">Low priority</span></h6>
-                      </td>
-                      <td class="border-0 align-middle">
-                        <a href="#!" data-mdb-toggle="tooltip" title="Done"><i
-                            class="fas fa-plus fa-lg text-success me-3"></i></a>
-                        <a href="#!" data-mdb-toggle="tooltip" title="Remove"><i
-                            class="fas fa-minus fa-lg text-warning"></i></a>
-                      </td>
+                      
                     </tr>
                     {% endfor %}
                 </div>

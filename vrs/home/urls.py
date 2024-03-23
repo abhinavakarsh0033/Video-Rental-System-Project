@@ -26,4 +26,5 @@ urlpatterns = [
     path("staff/orders/",views.stafforders,name='stafforders'),
     path("staff/increase/<int:id>",views.increase,name='increase'),
     path("staff/decrease/<int:id>",views.decrease,name='decrease'),
+    path("staff/orders/<str:type>",views.stafforders,name='stafforders'),
 ]
