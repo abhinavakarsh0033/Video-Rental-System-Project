@@ -46,7 +46,7 @@ class Movie(models.Model):
     buy_price = models.FloatField()
     rent_duration = models.IntegerField()
     runtime = models.DurationField(("Duration"), default=timedelta(0))
-    quantity = models.IntegerField(default=10)
+    total_quantity = models.IntegerField(default=10)
     available_quantity = models.IntegerField(default=10)
 
     def __str__(self):

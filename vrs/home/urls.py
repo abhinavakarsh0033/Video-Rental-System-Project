@@ -22,5 +22,8 @@ urlpatterns = [
     path("cart/",views.cart,name='cart'),
     path("carttoggle/<int:id>/<int:flag>/",views.carttoggle,name='carttoggle'),
     path("payment",views.payment,name='payment'),
-
+    path("staff/home/",views.staffhome,name='staffhome'),
+    path("staff/orders/",views.stafforders,name='stafforders'),
+    path("staff/increase/<int:id>",views.increase,name='increase'),
+    path("staff/decrease/<int:id>",views.decrease,name='decrease'),
 ]

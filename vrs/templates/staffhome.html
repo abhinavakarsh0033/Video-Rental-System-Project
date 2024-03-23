@@ -18,8 +18,13 @@ Cart
             background-clip: padding-box;
             box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
           }
+          .center_, .mb-0
+          {
+            text-align: center;
+            font-size: 1.25rem;
+          }
     </style>
-
+{% load mathfilters %}
 <body class="god">
     <section class="vh-100 gradient-custom-2">
         <div class="container py-5 h-100">
@@ -37,26 +42,36 @@ Cart
                     <thead>
                       <tr>
                         <th scope="col">Movie Title</th>
-                        <th scope="col">Quantity Rented</th>
-                        <th scope="col">Availability</th>
-                        <th scope="col">Add</th>
+                        <th scope="col" class="center_">Quantity Rented    </th>
+                        <th scope="col" class="center_">Availability</th>
+                        <th scope="col" class="center_">Add</th>
                       </tr>
                     </thead>
                     <div  style = " margin: 5px; border-radius: 10px;">
-                      {% for i in "pranaprana" %}
+                      {% for movie in movies %}
                     </tr>
                     <tr class="fw-normal">
                       <th class="border-0">
-                        <span class="ms-2 text-white">Ben Smith</span>
+                        <span class="ms-2 text-white ">{{movie.title}}</span>
                       </th>
-                      <td class="border-0 align-middle">Ask</td>
                       <td class="border-0 align-middle">
-                        <h6 class="mb-0"><span class="badge bg-success">Low priority</span></h6>
+                        <h6 class="mb-0 center_"><span class="badge bg-dark">{{ movie.total_quantity|sub:movie.available_quantity }}
+                        </span></h6>
+
                       </td>
-                      <td class="border-0 align-middle">
-                        <a href="#!" data-mdb-toggle="tooltip" title="Done"><i
+                      <td class="border-0 align-middle center_">
+                        {% if movie.available_quantity >= 10 %}
+                        <h6 class="mb-0"><span class="badge bg-success"> {{movie.available_quantity}}</span></h6>
+                        {% elif movie.available_quantity > 0 %}
+                        <h6 class="mb-0"><span class="badge py-1 px-2" style ="background-color: #e8630a "> {{movie.available_quantity}}</span></h6>
+                        {% else %}
+                        <h6 class="mb-0"><span class="badge py-1 px-2" style ="background-color: #ff0022"> {{movie.available_quantity}}</span></h6>
+                        {% endif %}
+                      </td>
+                      <td class="border-0 align-middle center_">
+                        <a href="/staff/increase/{{movie.id}}" data-mdb-toggle="tooltip" title="Done"><i
                             class="fas fa-plus fa-lg text-success me-3"></i></a>
-                        <a href="#!" data-mdb-toggle="tooltip" title="Remove"><i
+                        <a href="/staff/decrease/{{movie.id}}" data-mdb-toggle="tooltip" title="Remove"><i
                             class="fas fa-minus fa-lg text-warning"></i></a>
                       </td>
                     </tr>

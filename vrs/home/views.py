@@ -187,7 +187,7 @@ def movie(request,id):
 
 def add_to_cart(request,id):
     movie = Movie.objects.filter(id=id)
-    if movie[0].quantity<=0:
+    if movie[0].available_quantity<=0:
         messages.error(request, 'Movie currently out of stock!')
         return redirect('/movie/'+str(id))
     cart_item = Cart_Item(user=request.user,movie=movie[0],isrented=True)
@@ -215,7 +215,7 @@ def cart(request):
     cart_items = Cart_Item.objects.filter(user=request.user)
     total_price = 0.0
     for item in cart_items:
-        if item.movie.quantity<=0:
+        if item.movie.available_quantity<=0:
             messages.error(request, 'Movie '+item.movie.title+' is currently out of stock! Please remove it from the cart.')
             continue
         if item.isrented:
@@ -244,7 +244,7 @@ def payment(request):
                 price += item.movie.rent_price
             else:
                 price += item.movie.buy_price
-                item.movie.quantity -= 1
+                item.movie.total_quantity -= 1
             order = Order(user=request.user,movie=item.movie,isrented=item.isrented,total_price=price,order_date=timezone.now())
             order.save()
             item.movie.available_quantity -= 1
@@ -252,4 +252,30 @@ def payment(request):
             item.delete()
         return redirect('/home')   
     return render(request,'payment.html')    
+
+
+def staffhome(request):
+    movies = Movie.objects.all()
+    params = {'movies':movies}
+    return render(request,'staffhome.html', params)
+
+def stafforders(request):
+    return render(request,'stafforders.html')
+
+def increase(request,id):
+    movie = Movie.objects.filter(id=id)
+    movie = movie[0]
+    movie.total_quantity += 1
+    movie.available_quantity += 1
+    movie.save()
+    return redirect('/staff/home')
+
+def decrease(request,id):
+    movie = Movie.objects.filter(id=id)
+    movie = movie[0]
+    if movie.available_quantity>0:
+        movie.total_quantity -= 1
+        movie.available_quantity -= 1
+        movie.save()
+    return redirect('/staff/home')
 
