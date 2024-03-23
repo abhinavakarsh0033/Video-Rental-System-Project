@@ -11,14 +11,25 @@ from PIL import Image
 # Create your models here.
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # name = models.CharField(max_length=100)
-    # email = models.CharField(max_length=50)
-    # password = models.CharField(max_length=100)
     phone = models.CharField(max_length=10)
 
 
     def __str__(self):
         return str(self.user)
+
+class Staff(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=10)
+    staff_id = models.AutoField(primary_key=True)
+
+    class Meta:
+        permissions = [
+            ('can_view_orders','Can view orders'),
+            ('can_view_users','Can view users'),
+            ('can_view_userprofile','Can view user profile'),
+            ('can_view_movies','Can view movies'),
+            ('can_edit_moviequantity','Can edit movie quantity'),
+        ]
     
     
 class Movie(models.Model):
@@ -34,7 +45,8 @@ class Movie(models.Model):
     movie_buy_price = models.IntegerField()
     movie_rent_duration = models.IntegerField()
     movie_runtime  =models.DurationField(_("Duration"), default=timedelta(0), help_text=_("Duration of the movie in minutes"))
-    
+    movie_quantity = models.IntegerField(default=10)
+
     def __str__(self):
         return self.movie_title
 
