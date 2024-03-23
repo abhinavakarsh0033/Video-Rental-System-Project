@@ -13,7 +13,6 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=10)
 
-
     def __str__(self):
         return str(self.user)
 
@@ -33,22 +32,25 @@ class Staff(models.Model):
     
     
 class Movie(models.Model):
-    movie_id = models.AutoField(primary_key=True)
-    movie_title = models.CharField(max_length=100)
-    movie_desc = models.CharField(max_length=1000)
-    movie_img = models.ImageField(upload_to='movies/thumbnails')
-    # movie_video = models.FileField(upload_to='movies/videos')
-    movie_release_year = models.DateField()
-    movie_cast = models.CharField(max_length=500)
-    movie_genre = models.CharField(max_length=100,choices=[('Action','Action'),('Comedy','Comedy'),('Drama','Drama'),('Horror','Horror'),('Romance','Romance'),('Thriller','Thriller')])
-    movie_rent_price = models.IntegerField()
-    movie_buy_price = models.IntegerField()
-    movie_rent_duration = models.IntegerField()
-    movie_runtime  =models.DurationField(_("Duration"), default=timedelta(0), help_text=_("Duration of the movie in minutes"))
-    movie_quantity = models.IntegerField(default=10)
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=100)
+    desc = models.CharField(max_length=1000)
+    img = models.ImageField(upload_to='movies/thumbnails')
+    release_year = models.DateField()
+    genre = models.CharField(max_length=100,choices=[('Action','Action'),('Comedy','Comedy'),('Drama','Drama'),('Horror','Horror'),('Romance','Romance'),('Thriller','Thriller')])
+    cast = models.CharField(max_length=500)
+    director = models.CharField(max_length=100)
+    rating = models.FloatField()
+    certification = models.CharField(max_length=10,choices=[('U','U'),('U/A','U/A'),('A','A')])
+    rent_price = models.FloatField()
+    buy_price = models.FloatField()
+    rent_duration = models.IntegerField()
+    runtime = models.DurationField(("Duration"), default=timedelta(0))
+    quantity = models.IntegerField(default=10)
+    available_quantity = models.IntegerField(default=10)
 
     def __str__(self):
-        return self.movie_title
+        return self.title
 
 class Cart_Item(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -58,11 +60,15 @@ class Cart_Item(models.Model):
         return str(self.user) + ' ' + str(self.movie)    
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    items = models.ManyToManyField(Cart_Item)
-    total_price = models.IntegerField()
-    order_date = models.DateTimeField(auto_now_add=True)
     order_id = models.AutoField(primary_key=True)
-
+    order_date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, default=None)
+    total_price = models.IntegerField(default=0)
+    isrented = models.BooleanField(default=True)
+    
     def __str__(self):
-        return str(self.user) + ' ' + str(self.order_date)
+        if(self.isrented):
+            return str(self.user) + ' rented ' + str(self.movie)
+        else:
+            return str(self.user.first_name) + ' bought ' + str(self.movie)

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}
-{{movie.movie_title}}
+{{movie.title}}
 {% endblock title %}
 {% block body %}
 
@@ -10,7 +10,7 @@
     aspect-ratio: 16/9;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 1),
       rgba(0, 0, 0, 0.4)),
-    url("/media/{{movie.movie_img}}");
+    url("/media/{{movie.img}}");
 
     background-size: cover;
   }
@@ -72,30 +72,30 @@
 
 <div id="bg">
   <div class="content">
-    <h1 class="title">{{movie.movie_title}}</h1>
+    <h1 class="title">{{movie.title}}</h1>
     <div class="row" style = "display: flex;">
       <div class="col-1">
-        <p class="genre">{{movie.movie_genre}}</p>
+        <p class="genre">{{movie.genre}}</p>
       </div>
       <div class="col-1 ml-2 mr-1">
         <p class="duration"> {{hours}}hr {{minutes}}m</p>
       </div>
       <div class="col-1">
-        <p class = "year">{{movie.movie_release_year.year}}</p>   
+        <p class = "year">{{movie.release_year.year}}</p>   
       </div>
     </div>
     <!-- adding movie desciption in good format -->
     <div class="row">
       <div class="col-6">
-        <p class="desc">{{movie.movie_desc}}</p>
+        <p class="desc">{{movie.desc}}</p>
       </div>
     </div>
     <!-- to make buttons to rent and buy movies -->
     <div class="row">
       <div class="col-7 rbuy">
-        <button type="button" class="btn btn-dark btn-lg">Rent ₹{{movie.movie_rent_price}} </button>
-        <button type="button" class="btn btn-dark btn-lg">Buy ₹{{movie.movie_buy_price}}</button>
-        <a style = "width: 10%;" type="button" class="btn btn-dark btn-lg" href="/add_to_cart/{{movie.movie_id}}" ><i class="fas fa-cart-plus"  style="scale: 1.25;"></i></a>
+        <button type="button" class="btn btn-dark btn-lg disabled">Rent ₹{{movie.rent_price}} </button>
+        <button type="button" class="btn btn-dark btn-lg disabled">Buy ₹{{movie.buy_price}}</button>
+        <a style = "width: 10%;" type="button" class="btn btn-dark btn-lg" href="/add_to_cart/{{movie.id}}" ><i class="fas fa-cart-plus"  style="scale: 1.25;"></i></a>
       </div>
     </div>
     <!-- to display cast properly -->
@@ -104,7 +104,7 @@
           <p class="nicecast heado" style="color: rgb(169, 169, 169)">Starring: </p>
         </div>
         <div class="col-1" style="padding-left: 2px">
-          <p class="nicecast">{{movie.movie_cast}}</p>
+          <p class="nicecast">{{movie.cast}}</p>
         </div>
     </div>
   </div>

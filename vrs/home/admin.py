@@ -11,4 +11,9 @@ admin.site.register(UserProfile)
 admin.site.register(Staff)
 admin.site.register(Movie)
 admin.site.register(Cart_Item)
-admin.site.register(Order)
+# admin.site.register(Order)
+
+class OrderAdmin(admin.ModelAdmin):
+    readonly_fields = ('order_id','order_date')
+
+admin.site.register(Order,OrderAdmin)

@@ -8,6 +8,8 @@ from home.models import UserProfile
 from home.models import Movie
 from random import shuffle
 from home.models import Cart_Item
+from home.models import Order
+from django.utils import timezone
 
 
 # Create your views here.
@@ -79,7 +81,7 @@ def signout(request):
     return redirect('/')
 
 def action(request):
-    action_movies = Movie.objects.filter(movie_genre='Action')
+    action_movies = Movie.objects.filter(genre='Action')
     moviesets = []
     set4 = []
     for movie in action_movies:
@@ -92,7 +94,7 @@ def action(request):
     return render(request,'display.html',params)
 
 def comedy(request):
-    comedy_movies = Movie.objects.filter(movie_genre='Comedy')
+    comedy_movies = Movie.objects.filter(genre='Comedy')
     moviesets = []
     set4 = []
     for movie in comedy_movies:
@@ -105,7 +107,7 @@ def comedy(request):
     return render(request,'display.html',params)
 
 def drama(request):
-    drama_movies = Movie.objects.filter(movie_genre='Drama')
+    drama_movies = Movie.objects.filter(genre='Drama')
     moviesets = []
     set4 = []
     for movie in drama_movies:
@@ -118,7 +120,7 @@ def drama(request):
     return render(request,'display.html',params)
 
 def horror(request):
-    horror_movies = Movie.objects.filter(movie_genre='Horror')
+    horror_movies = Movie.objects.filter(genre='Horror')
     moviesets = []
     set4 = []
     for movie in horror_movies:
@@ -131,7 +133,7 @@ def horror(request):
     return render(request,'display.html',params)
 
 def romance(request):
-    romance_movies = Movie.objects.filter(movie_genre='Romance')
+    romance_movies = Movie.objects.filter(genre='Romance')
     moviesets = []
     set4 = []
     for movie in romance_movies:
@@ -144,7 +146,7 @@ def romance(request):
     return render(request,'display.html',params)
 
 def thriller(request):
-    thriller_movies = Movie.objects.filter(movie_genre='Thriller')
+    thriller_movies = Movie.objects.filter(genre='Thriller')
     moviesets = []
     set4 = []
     for movie in thriller_movies:
@@ -161,7 +163,7 @@ def search(request):
     allMovies = Movie.objects.all()
     movies = []
     for movie in allMovies:
-        if query.lower() in movie.movie_title.lower() or query.lower() in movie.movie_genre.lower() or query.lower() in movie.movie_cast.lower():
+        if query.lower() in movie.title.lower() or query.lower() in movie.genre.lower() or query.lower() in movie.cast.lower():
             movies.append(movie)
     moviesets = []
     set4 = []
@@ -175,16 +177,19 @@ def search(request):
     return render(request,'display.html',params)
 
 def movie(request,id):
-    movie = Movie.objects.filter(movie_id=id)
+    movie = Movie.objects.filter(id=id)
     if(len(movie)==0):
         return redirect('/')
-    hours = movie[0].movie_runtime.seconds//3600
-    minutes = (movie[0].movie_runtime.seconds//60)%60
+    hours = movie[0].runtime.seconds//3600
+    minutes = (movie[0].runtime.seconds//60)%60
     params = {'movie':movie[0], 'hours':hours, 'minutes':minutes}
     return render(request,'movie.html',params)
 
 def add_to_cart(request,id):
-    movie = Movie.objects.filter(movie_id=id)
+    movie = Movie.objects.filter(id=id)
+    if movie[0].quantity<=0:
+        messages.error(request, 'Movie currently out of stock!')
+        return redirect('/movie/'+str(id))
     cart_item = Cart_Item(user=request.user,movie=movie[0],isrented=True)
     # print(cart_item)
     all_cart_items = Cart_Item.objects.filter(user=request.user,movie=movie[0])
@@ -200,7 +205,7 @@ def add_to_cart(request,id):
     return redirect('/movie/'+str(id))
 
 def remove_from_cart(request,id):
-    movie = Movie.objects.filter(movie_id=id)
+    movie = Movie.objects.filter(id=id)
     cart_item = Cart_Item.objects.filter(user=request.user,movie=movie[0])
     cart_item.delete()
     messages.success(request, 'Movie removed from cart!')
@@ -210,17 +215,20 @@ def cart(request):
     cart_items = Cart_Item.objects.filter(user=request.user)
     total_price = 0.0
     for item in cart_items:
+        if item.movie.quantity<=0:
+            messages.error(request, 'Movie '+item.movie.title+' is currently out of stock! Please remove it from the cart.')
+            continue
         if item.isrented:
-            total_price += item.movie.movie_rent_price
+            total_price += item.movie.rent_price
         else:
-            total_price += item.movie.movie_buy_price
+            total_price += item.movie.buy_price
     tax = total_price*0.18
     final_price = total_price + tax
     params = {'cart_items':cart_items, 'total_price':total_price, 'tax':tax, 'final_price':final_price}
     return render(request,'cart.html',params)
 
 def carttoggle(request, id, flag):
-    cart_item = Cart_Item.objects.filter(user=request.user,movie = Movie.objects.filter(movie_id=id)[0])
+    cart_item = Cart_Item.objects.filter(user=request.user,movie = Movie.objects.filter(id=id)[0])
     cart_item = cart_item[0]
     cart_item.isrented = bool(flag)
     cart_item.save()
@@ -228,7 +236,20 @@ def carttoggle(request, id, flag):
 
 def payment(request):
     if(request.method=='POST'):
-        messages.success(request, 'Payment Successful!')
+        messages.success(request, 'Payment Successful! Your order has been placed!')
+        cart_items = Cart_Item.objects.filter(user=request.user)
+        for item in cart_items:
+            price = 0.0
+            if item.isrented:
+                price += item.movie.rent_price
+            else:
+                price += item.movie.buy_price
+                item.movie.quantity -= 1
+            order = Order(user=request.user,movie=item.movie,isrented=item.isrented,total_price=price,order_date=timezone.now())
+            order.save()
+            item.movie.available_quantity -= 1
+            item.movie.save()
+            item.delete()
         return redirect('/home')   
     return render(request,'payment.html')    
 

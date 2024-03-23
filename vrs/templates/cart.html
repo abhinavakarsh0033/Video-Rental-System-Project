@@ -68,13 +68,13 @@ Cart
                     <div class="row d-flex justify-content-between align-items-center">
                       <div class="col-md-2 col-lg-2 col-xl-2">
                         <img
-                          src="/media/{{items.movie.movie_img}}"
+                          src="/media/{{items.movie.img}}"
                           class="img-fluid rounded-3" alt="Cotton T-shirt" style="max-width: 130%; aspect-ratio: 2/3;">
                       </div>
                       <div class="col-md-3 col-lg-3 col-xl-3">
-                          <h6 class="font-weight-bold mb-0">{{items.movie.movie_title}}</h6>
-                        <h6 class="text-muted mb-0  ">Rent: ₹{{items.movie.movie_rent_price}}</h6>
-                        <h6 class="text-muted">Buy: ₹{{items.movie.movie_buy_price}}</h6>
+                          <h6 class="font-weight-bold mb-0">{{items.movie.title}}</h6>
+                        <h6 class="text-muted mb-0  ">Rent: ₹{{items.movie.rent_price}}</h6>
+                        <h6 class="text-muted">Buy: ₹{{items.movie.buy_price}}</h6>
                       </div>
 
                       <div class="col-md-3 col-lg-3 col-xl-2">
@@ -82,17 +82,17 @@ Cart
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
                           {% if items.isrented == 1 %}
                             <label class="btn btn-outline-dark active">
-                              <input type="radio" name="options" id="rent" onclick="showAlert({{items.movie.movie_id}}, 1)" checked>Rent
+                              <input type="radio" name="options" id="rent" onclick="showAlert({{items.movie.id}}, 1)" checked>Rent
                             </label>
                             <label class="btn btn-outline-dark">
-                              <input type="radio" name="options" id="buy" onclick="showAlert({{items.movie.movie_id}}, 0)"> Buy
+                              <input type="radio" name="options" id="buy" onclick="showAlert({{items.movie.id}}, 0)"> Buy
                             </label>
                           {% else %}
                             <label class="btn btn-outline-dark">
-                              <input type="radio" name="options" id="rent" onclick="showAlert({{items.movie.movie_id}}, 1)">Rent
+                              <input type="radio" name="options" id="rent" onclick="showAlert({{items.movie.id}}, 1)">Rent
                             </label>
                             <label class="btn btn-outline-dark active">
-                              <input type="radio" name="options" id="buy" onclick="showAlert({{items.movie.movie_id}}, 0)" checked> Buy
+                              <input type="radio" name="options" id="buy" onclick="showAlert({{items.movie.id}}, 0)" checked> Buy
                             </label>
                           {% endif %}
                           </div>
@@ -101,14 +101,14 @@ Cart
                       <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                         <h6 class="mb-0">
                             ₹{% if items.isrented == 0 %}
-                            {{items.movie.movie_buy_price}}
+                            {{items.movie.buy_price}}
                             {% else %}
-                            {{items.movie.movie_rent_price}}
+                            {{items.movie.rent_price}}
                             {% endif %}
                         </h6>
                       </div>
                       <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                        <a href="/remove_from_cart/{{items.movie.movie_id}}/" class="text-muted"><i class="fas fa-times"></i></a>
+                        <a href="/remove_from_cart/{{items.movie.id}}/" class="text-muted"><i class="fas fa-times"></i></a>
                       </div>
                     </div>
   
@@ -130,12 +130,12 @@ Cart
 
                     {% for item in cart_items %}
                     <div class="d-flex justify-content-between mb-1">
-                      <h5 class="text-black">{{item.movie.movie_title}}</h5>
+                      <h5 class="text-black">{{item.movie.title}}</h5>
                       <h5>
                         ₹{% if item.isrented == 0 %}
-                            {{item.movie.movie_buy_price}}
+                            {{item.movie.buy_price}}
                             {% else %}
-                            {{item.movie.movie_rent_price}}
+                            {{item.movie.rent_price}}
                             {% endif %}
                       </h5>
                     </div>
