@@ -41,43 +41,48 @@ Cart
         }
 </style>
 
-<section class="h-80" style="background-color: black;">
-    <div class="container py-5 h-100">
+<section class="h-100" style="background-color: black;">
+    <div class="container py-5 h-100" style="max-width: 1214px">
       <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-12">
+        <div class="col-13">
           <div class="card card-registration card-registration-2" style="border-radius: 15px;">
             <div class="card-body p-0">
               <div class="row g-0">
                 <div class="col-lg-8">
                   <div class="p-5">
-                    <div class="d-flex justify-content-between align-items-center mb-5">
-                      <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
-                      <h6 class="mb-0 text-muted">3 items</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                      <h2 class="font-weight-bold mb-0 text-black">Shopping Cart</h2>
+                      <h6 class="mb-0 text-muted">{{cart_items|length}} items</h6>
                     </div>
-                    <hr class="my-4">
+                    <hr class="my-2">
                     
-                    {% for i in "godlsda" %}
-                    <div class="row mb-4 d-flex justify-content-between align-items-center">
+                    {% for items in cart_items %}
+                    <div class="row d-flex justify-content-between align-items-center">
                       <div class="col-md-2 col-lg-2 col-xl-2">
                         <img
-                          src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img5.webp"
-                          class="img-fluid rounded-3" alt="Cotton T-shirt">
+                          src="/media/{{items.movie.movie_img}}"
+                          class="img-fluid rounded-3" alt="Cotton T-shirt" style="max-width: 130%; aspect-ratio: 2/3;">
                       </div>
                       <div class="col-md-3 col-lg-3 col-xl-3">
-                        <h6 class="text-muted">Shirt</h6>
-                        <h6 class="text-black mb-0">Cotton T-shirt</h6>
+                          <h6 class="font-weight-bold mb-0">{{items.movie.movie_title}}</h6>
+                        <h6 class="text-muted mb-0  ">Rent: ₹{{items.movie.movie_rent_price}}</h6>
+                        <h6 class="text-muted">Buy: ₹{{items.movie.movie_buy_price}}</h6>
                       </div>
-                      <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                        
-                        <button class="btn btn-dark px-2 mx-1">
-                          <a> Rent </a>
-                        </button>
-                        
-                        <button class="btn btn-dark px-2">
-                            <a> Buy </a>   
-                        </button>
 
+                      <div class="col-md-3 col-lg-3 col-xl-2">
+                        
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <a href="cart/">
+                            <label class="btn btn-outline-dark active">
+                              <input type="radio" name="options" id="option1" checked> Rent
+                            </label>
+                            </a>
+                            <label class="btn btn-outline-dark">
+                              <input type="radio" name="options" id="option2"> Buy
+                            </label>
+                          </div>
                       </div>
+
                       <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                         <h6 class="mb-0">€ 44.00</h6>
                       </div>
@@ -86,7 +91,7 @@ Cart
                       </div>
                     </div>
   
-                    <hr class="my-4">
+                    <hr class="my-2">
                     {% endfor %}
 
                   </div>
