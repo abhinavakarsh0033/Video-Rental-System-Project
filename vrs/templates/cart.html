@@ -47,7 +47,6 @@ Cart
         if (value == "rent") {
             $ajax({
                 type: "POST",
-                url: "{% url 'carttoggle:1' %}",   /* Passing the url for the view */
                 data: {csrfmiddlewaretoken: '{{ csrf_token }}',
                       text: "this is my test view"},   /* Passing the text data */
                 success:  function(response){
@@ -57,7 +56,6 @@ Cart
         } else {
             $ajax({
                 type: "POST",
-                url: "{% url 'carttoggle:0' %}",   /* Passing the url for the view */
                 data: {csrfmiddlewaretoken: '{{ csrf_token }}',
                       text: "this is my test view"},   /* Passing the text data */
                 success:  function(response){

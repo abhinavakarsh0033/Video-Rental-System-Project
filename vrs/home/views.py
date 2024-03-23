@@ -185,7 +185,7 @@ def movie(request,id):
 
 def add_to_cart(request,id):
     movie = Movie.objects.filter(movie_id=id)
-    cart_item = Cart_Item(user=request.user,movie=movie[0])
+    cart_item = Cart_Item(user=request.user,movie=movie[0],isrented=True)
     # print(cart_item)
     all_cart_items = Cart_Item.objects.filter(user=request.user,movie=movie[0])
     if len(all_cart_items)==0:
