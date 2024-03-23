@@ -48,7 +48,8 @@ Cart
     }
 </script>
 
-<section class="h-100" style="background-color: black;">
+<section class="h-100 align-items-center" style="background-color: black;">
+  {% if cart_items|length != 0 %}
     <div class="container py-5 h-100" style="max-width: 1214px">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-13">
@@ -172,5 +173,17 @@ Cart
       </div>
     </div>
   </section>
+  {% else %}
+  <div>
+    <img src="/static/emptycart.png" style ="margin: 0;
+    width: 20%;
+    position: absolute;
+    top: 50%;
+    left: 48%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    ">
+  </div>
+  {% endif %}
 
 {% endblock body %}
