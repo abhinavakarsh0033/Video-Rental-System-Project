@@ -18,8 +18,10 @@ def index(request):
         user = authenticate(username=request.POST.get('email'),password=request.POST.get('password'))
         if user is not None:
             login(request, user)
+            messages.success(request, 'Welcome '+user.first_name+'!')
             return redirect('/home')    
         else:
+            messages.error(request, 'Invalid Credentials!')
             return render(request,'index.html')
             
     return render(request,'index.html')
@@ -43,6 +45,8 @@ def signup(request):
 
         messages.success(request, 'Your account has been created!')
         return redirect('/')
+
+    # messages.error(request, 'Invalid Credentials!')    
     return render(request,'signup.html')
 
 def about(request):
@@ -187,8 +191,10 @@ def add_to_cart(request,id):
     if len(all_cart_items)==0:
         cart_item.save()
         # alert the user that the movie has been added to the cart
+        messages.success(request, 'Movie added to cart!')
     else:
         # alert the user that the movie is already in the cart
+        messages.error(request, 'Movie already in cart!')
         pass
     print(all_cart_items)
     return redirect('/movie/'+str(id))
@@ -197,11 +203,15 @@ def remove_from_cart(request,id):
     movie = Movie.objects.filter(movie_id=id)
     cart_item = Cart_Item.objects.filter(user=request.user,movie=movie[0])
     cart_item.delete()
+    messages.success(request, 'Movie removed from cart!')
     return redirect('/cart')
 
 def cart(request):
     return render(request,'cart.html')
 
 def payment(request):
+    if(request.method=='POST'):
+        messages.success(request, 'Payment Successful!')
+        return redirect('/home')   
     return render(request,'payment.html')    
 
