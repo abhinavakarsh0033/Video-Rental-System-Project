@@ -64,11 +64,13 @@ class Order(models.Model):
     order_date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, default=None)
-    total_price = models.IntegerField(default=0)
+    total_price = models.FloatField(default=0)
     isrented = models.BooleanField(default=True)
-    
+    status = models.CharField(max_length=100,choices=[('Not Returned','Not Returned'),('Sold','Sold'),('Overdue','Overdue'), ('Returned','Returned')],default='Not Returned')
+    due_date = models.DateTimeField(blank = True, null = True)
+
     def __str__(self):
         if(self.isrented):
             return str(self.user) + ' rented ' + str(self.movie)
         else:
-            return str(self.user.first_name) + ' bought ' + str(self.movie)
+            return str(self.user) + ' bought ' + str(self.movie)

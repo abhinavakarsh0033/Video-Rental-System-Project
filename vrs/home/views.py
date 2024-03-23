@@ -235,17 +235,22 @@ def carttoggle(request, id, flag):
     return redirect('/cart')
 
 def payment(request):
+    user = request.user
     if(request.method=='POST'):
         messages.success(request, 'Payment Successful! Your order has been placed!')
         cart_items = Cart_Item.objects.filter(user=request.user)
         for item in cart_items:
-            price = 0.0
             if item.isrented:
-                price += item.movie.rent_price
+                price = item.movie.rent_price
+                status = 'Not Returned'
+                due_date = timezone.now() + timezone.timedelta(days=item.movie.rent_duration)
             else:
-                price += item.movie.buy_price
+                price = item.movie.buy_price
                 item.movie.total_quantity -= 1
-            order = Order(user=request.user,movie=item.movie,isrented=item.isrented,total_price=price,order_date=timezone.now())
+                status = 'Sold'
+                due_date = None
+            price *= 1.18
+            order = Order(user=user,movie=item.movie,isrented=item.isrented,total_price=price,order_date=timezone.now(), due_date=due_date, status = status)
             order.save()
             item.movie.available_quantity -= 1
             item.movie.save()
@@ -280,12 +285,14 @@ def decrease(request,id):
     return redirect('/staff/home')
 
 def stafforders(request,type):
+    #storing all order in a dictionary along with their due date and status
     if type=='rented':
         orders = Order.objects.filter(isrented=True)
     elif type=='bought':
         orders = Order.objects.filter(isrented=False)
     elif type=='all':
         orders = Order.objects.all()
+
     #sorting based on order_id
     orders = sorted(orders, key=lambda x: x.order_id, reverse=True)
     params = {'orders':orders, 'type':type.capitalize()}
