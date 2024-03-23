@@ -207,7 +207,24 @@ def remove_from_cart(request,id):
     return redirect('/cart')
 
 def cart(request):
-    return render(request,'cart.html')
+    cart_items = Cart_Item.objects.filter(user=request.user)
+    total_price = 0
+    for item in cart_items:
+        if item.isrented:
+            total_price += item.movie.movie_rent_price
+        else:
+            total_price += item.movie.movie_buy_price
+    params = {'cart_items':cart_items, 'total_price':total_price}
+    return render(request,'cart.html',params)
+
+def carttoggle(request,id):
+    cart_item = Cart_Item.objects.filter(user=request.user,movie__movie_id=id)
+    if len(cart_item)==0:
+        return redirect('/cart')
+    cart_item = cart_item[0]
+    cart_item.isrented = not cart_item.isrented
+    cart_item.save()
+    return redirect('/cart')
 
 def payment(request):
     if(request.method=='POST'):

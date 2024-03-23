@@ -41,6 +41,34 @@ Cart
         }
 </style>
 
+<script>
+    function showAlert(value) {
+        console.log(value)
+        if (value == "rent") {
+            $ajax({
+                type: "POST",
+                url: "{% url 'carttoggle:1' %}",   /* Passing the url for the view */
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}',
+                      text: "this is my test view"},   /* Passing the text data */
+                success:  function(response){
+                       alert(response);
+                   }
+            });
+        } else {
+            $ajax({
+                type: "POST",
+                url: "{% url 'carttoggle:0' %}",   /* Passing the url for the view */
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}',
+                      text: "this is my test view"},   /* Passing the text data */
+                success:  function(response){
+                       alert(response);
+                   }
+            });
+        }
+        
+    }
+</script>
+
 <section class="h-100" style="background-color: black;">
     <div class="container py-5 h-100" style="max-width: 1214px">
       <div class="row d-flex justify-content-center align-items-center h-100">
@@ -72,19 +100,23 @@ Cart
                       <div class="col-md-3 col-lg-3 col-xl-2">
                         
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                            <a href="cart/">
                             <label class="btn btn-outline-dark active">
-                              <input type="radio" name="options" id="option1" checked> Rent
+                              <input type="radio" name="options" id="rent" onclick="showAlert(this.id)" checked>Rent
                             </label>
-                            </a>
                             <label class="btn btn-outline-dark">
-                              <input type="radio" name="options" id="option2"> Buy
+                              <input type="radio" name="options" id="buy" onclick="showAlert(this.id)"> Buy
                             </label>
                           </div>
                       </div>
 
                       <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                        <h6 class="mb-0">€ 44.00</h6>
+                        <h6 class="mb-0">
+                            ₹{% if items.isrented == 0 %}
+                            {{items.movie.movie_buy_price}}
+                            {% else %}
+                            {{items.movie.movie_rent_price}}
+                            {% endif %}
+                        </h6>
                       </div>
                       <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                         <a href="#!" class="text-muted"><i class="fas fa-times"></i></a>
