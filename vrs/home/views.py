@@ -349,3 +349,23 @@ def stafforders(request,type):
     orders = sorted(orders, key=lambda x: x.order_id, reverse=True)
     params = {'orders':orders, 'type':type.capitalize()}
     return render(request,'stafforders.html',params)
+
+def staffprofile(request):
+    userprofile = UserProfile.objects.filter(user=request.user)
+    params = {'userprofile': userprofile[0]}
+    return render(request, 'staffprofile.html', params)
+
+def staffchangepassword(request):
+    if request.method=='POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Password Changed Successfully !')
+            return redirect('/staff/profile')
+        else:
+            messages.error(request, "Please correct the error below.")
+            return render(request, 'staffchangepassword.html', {'form': form})
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'staffchangepassword.html', {'form': form})
