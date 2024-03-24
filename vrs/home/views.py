@@ -250,6 +250,7 @@ def changepassword(request):
 
 def orders(request):
     orders = Order.objects.filter(user=request.user)
+    orders = sorted(orders, key=lambda x: x.order_id, reverse=True)
     params = {'orders':orders}
     return render(request,'orders.html',params)
 
