@@ -31,5 +31,6 @@ urlpatterns = [
     path("staff/decrease/<int:id>",views.decrease,name='decrease'),
     path("staff/orders/<str:type>",views.stafforders,name='stafforders'),
     path("staff/profile/",views.staffprofile,name='staffprofile'),
+    path("staff/updateprofile/", views.staffupdateprofile, name="staffupdateprofile"),
     path("staff/changepassword/", views.staffchangepassword, name="staffupdateprofile"),
 ]

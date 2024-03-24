@@ -23,6 +23,8 @@ def index(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'Welcome '+user.first_name+'!')
+            if user.is_staff:
+                return redirect('/staff/home')
             return redirect('/home')    
         else:
             messages.error(request, 'Invalid Credentials!')
@@ -368,6 +370,41 @@ def staffprofile(request):
     userprofile = UserProfile.objects.filter(user=request.user)
     params = {'userprofile': userprofile[0]}
     return render(request, 'staffprofile.html', params)
+
+def staffupdateprofile(request):
+    if request.method=='POST':
+        user = request.user 
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        dob = request.POST.get('dob')
+        gender = request.POST.get('gender')
+        userprofile = UserProfile.objects.filter(user=request.user)
+        userprofile = userprofile[0]
+        if name!="":
+            user.first_name = name.split(' ')[0]
+            user.last_name = ''
+            for i in range(1,len(name.split(' '))):
+                user.last_name = user.last_name + ' ' + name.split(' ')[i]
+        if email!="":
+            temp_user = User.objects.filter(username=email)
+            if temp_user != user:
+                messages.error(request,"This email is already registered")
+                params = {'userprofile': userprofile}
+                return render(request, 'profile.html', params)
+            user.username = email
+            user.email = email
+        user.save()
+        if phone != "":
+            userprofile.phone = phone
+        if dob != "":
+            userprofile.dob = dob
+        userprofile.gender = gender
+        userprofile.save()
+        messages.success(request, 'Profile Updated Successfully !')
+
+        return redirect('/staff/profile')
+    return render(request, 'staffupdateprofile.html')
 
 def staffchangepassword(request):
     if request.method=='POST':
