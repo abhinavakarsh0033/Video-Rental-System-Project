@@ -41,6 +41,10 @@ def signup(request):
         lastname = ''
         for i in range(1,len(name.split(' '))):
             lastname = lastname + ' ' + name.split(' ')[i]
+  
+        if User.objects.filter(username=email).exists():
+            messages.error(request, 'Email already exists!')
+            return render(request,'signup.html')
        
         user = User.objects.create_user(username=email, email=email, password=password, first_name=firstname, last_name=lastname)
         user.save()
@@ -208,6 +212,11 @@ def updateprofile(request):
             for i in range(1,len(name.split(' '))):
                 user.last_name = user.last_name + ' ' + name.split(' ')[i]
         if email!="":
+            temp_user = User.objects.filter(username=email)
+            if temp_user != user:
+                messages.error(request,"This email is already registered")
+                params = {'userprofile': userprofile}
+                return render(request, 'profile.html', params)
             user.username = email
             user.email = email
         user.save()
