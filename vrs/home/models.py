@@ -12,6 +12,8 @@ from PIL import Image
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=10)
+    dob = models.DateField(null=True)
+    gender = models.CharField(max_length = 100, null=True,choices =[('None', 'None'), ('Male', 'Male'), ('Female', 'Female')], default = 'None')
 
     def __str__(self):
         return str(self.user)

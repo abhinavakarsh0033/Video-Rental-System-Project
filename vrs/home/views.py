@@ -10,6 +10,8 @@ from random import shuffle
 from home.models import Cart_Item
 from home.models import Order
 from django.utils import timezone
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 # Create your views here.
@@ -186,7 +188,54 @@ def movie(request,id):
     return render(request,'movie.html',params)
 
 def profile(request):
-    return render(request, 'profile.html')
+    userprofile = UserProfile.objects.filter(user=request.user)
+    params = {'userprofile': userprofile[0]}
+    return render(request, 'profile.html', params)
+
+def updateprofile(request):
+    if request.method=='POST':
+        user = request.user 
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        dob = request.POST.get('dob')
+        gender = request.POST.get('gender')
+        userprofile = UserProfile.objects.filter(user=request.user)
+        userprofile = userprofile[0]
+        if name!="":
+            user.first_name = name.split(' ')[0]
+            user.last_name = ''
+            for i in range(1,len(name.split(' '))):
+                user.last_name = user.last_name + ' ' + name.split(' ')[i]
+        if email!="":
+            user.username = email
+            user.email = email
+        user.save()
+        if phone != "":
+            userprofile.phone = phone
+        if dob != "":
+            userprofile.dob = dob
+        userprofile.gender = gender
+        userprofile.save()
+        messages.success(request, 'Profile Updated Successfully !')
+
+        return redirect('/profile')
+    return render(request, 'updateprofile.html')
+
+def changepassword(request):
+    if request.method=='POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Password Changed Successfully !')
+            return redirect('/profile')
+        else:
+            messages.error(request, "Please correct the error below.")
+            return render(request, 'changepassword.html', {'form': form})
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'changepassword.html', {'form': form})
 
 def add_to_cart(request,id):
     movie = Movie.objects.filter(id=id)
