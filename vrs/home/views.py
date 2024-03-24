@@ -246,6 +246,11 @@ def changepassword(request):
         form = PasswordChangeForm(request.user)
     return render(request, 'changepassword.html', {'form': form})
 
+def orders(request):
+    orders = Order.objects.filter(user=request.user)
+    params = {'orders':orders}
+    return render(request,'orders.html',params)
+
 def add_to_cart(request,id):
     movie = Movie.objects.filter(id=id)
     if movie[0].available_quantity<=0:
