@@ -185,6 +185,9 @@ def movie(request,id):
     params = {'movie':movie[0], 'hours':hours, 'minutes':minutes}
     return render(request,'movie.html',params)
 
+def profile(request):
+    return render(request, 'profile.html')
+
 def add_to_cart(request,id):
     movie = Movie.objects.filter(id=id)
     if movie[0].available_quantity<=0:

@@ -83,6 +83,14 @@
       <div class="col-1">
         <p class = "year">{{movie.release_year.year}}</p>   
       </div>
+      <div class="col-1">
+        <p class="badge bg-secondary px-2 py-2 mx-0 my-0" style = "text-wrap: nowrap; font-size: 1.25rem">{{movie.certification}}</p>   
+      </div>
+    </div>
+    <div class="row" style = "display: flex;">
+      <div class="col-1">
+        <p class = "year" style = "text-wrap: nowrap">Rating: {{movie.rating}}</p>   
+      </div>
     </div>
     <!-- adding movie desciption in good format -->
     <div class="row">
@@ -93,18 +101,31 @@
     <!-- to make buttons to rent and buy movies -->
     <div class="row">
       <div class="col-7 rbuy">
-        <button type="button" class="btn btn-dark btn-lg disabled">Rent ₹{{movie.rent_price}} </button>
-        <button type="button" class="btn btn-dark btn-lg disabled">Buy ₹{{movie.buy_price}}</button>
+        <button type="button" class="btn btn-dark disabled">Rent ₹{{movie.rent_price}}</button>
+        <button type="button" class="btn btn-dark disabled">Buy ₹{{movie.buy_price}}</button>
         <a style = "width: 10%;" type="button" class="btn btn-dark btn-lg" href="/add_to_cart/{{movie.id}}" ><i class="fas fa-cart-plus"  style="scale: 1.25;"></i></a>
       </div>
     </div>
+    <div class="row main-cast  py-2">
+      <div class="col-1"  style="max-width: 6.8%; padding-right: 0px">
+        <p class="nicecast heado" style="color: rgb(169, 169, 169)">Rent duration: {{movie.rent_duration}} days </p>
+      </div>
+  </div>
     <!-- to display cast properly -->
-    <div class="row main-cast">
+    <div class="row main-cast pt-2">
         <div class="col-1"  style="max-width: 6.8%; padding-right: 0px">
           <p class="nicecast heado" style="color: rgb(169, 169, 169)">Starring: </p>
         </div>
         <div class="col-1" style="padding-left: 2px">
           <p class="nicecast">{{movie.cast}}</p>
+        </div>
+    </div>
+    <div class="row main-cast py-0">
+        <div class="col-1"  style="max-width: 6.8%; padding-right: 0px">
+          <p class="nicecast heado" style="color: rgb(169, 169, 169)">Director: </p>
+        </div>
+        <div class="col-1" style="padding-left: 2px">
+          <p class="nicecast">{{movie.director}}</p>
         </div>
     </div>
   </div>

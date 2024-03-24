@@ -16,6 +16,7 @@ urlpatterns = [
     path("romance/",views.romance,name='romance'),
     path("thriller/",views.thriller,name='thriller'),
     path("search/",views.search,name='search'),
+    path("profile/",views.profile, name="profile"),
     path("movie/<int:id>/",views.movie,name='movie'),
     path("add_to_cart/<int:id>/",views.add_to_cart,name='add_to_cart'),
     path("remove_from_cart/<int:id>/",views.remove_from_cart,name='remove_from_cart'),
