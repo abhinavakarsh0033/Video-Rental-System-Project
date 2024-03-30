@@ -23,13 +23,9 @@ def index(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'Welcome '+user.first_name+'!')
-<<<<<<< HEAD
             if user.is_superuser:
                 return redirect('/admin')
             elif user.is_staff:
-=======
-            if user.is_staff:
->>>>>>> 049eb6e6233ac3561455470b5f0a6734d124b50c
                 return redirect('/staff/home')
             return redirect('/home')    
         else:
