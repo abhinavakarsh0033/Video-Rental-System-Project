@@ -87,7 +87,27 @@ def home(request):
             moviesets.append(set5)
             set5 = []
 
-    params={'range1':moviesets[0],'range2':moviesets[1:]}
+    # Latest Arrivals
+    movies = Movie.objects.all().order_by('-release_year')
+    latest_movies = []
+    set5 = []
+    for movie in movies:
+        set5.append(movie)
+        if len(set5)==5:
+            latest_movies.append(set5)
+            set5 = []
+
+    # Popular Movies
+    movies = Movie.objects.all().order_by('-rating')
+    popular_movies = []
+    set5 = []
+    for movie in movies:
+        set5.append(movie)
+        if len(set5)==5:
+            popular_movies.append(set5)
+            set5 = []
+
+    params={'range1':moviesets[0],'range2':moviesets[1:],'latest_range1':latest_movies[0],'latest_range2':latest_movies[1:],'popular_range1':popular_movies[0],'popular_range2':popular_movies[1:] }
     return render(request,'home.html',params)
 
 def contact(request):
