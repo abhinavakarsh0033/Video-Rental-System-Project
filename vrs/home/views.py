@@ -480,5 +480,18 @@ def updatestatus():
             order.save()
 
 def stafforder(request,id):
+    updatestatus()
     params = {'order':Order.objects.filter(order_id=id)[0]}
-    return render(request,'orderdisplay.html', params)   
+    return render(request,'orderdisplay.html', params)  
+
+
+def stafforderupdate(request, id):
+    if request.method == 'POST':
+        status = request.POST.get('status')
+        print(status)
+        order = Order.objects.filter(order_id=id)[0]
+        order.status = status
+        order.save()
+        messages.success(request, 'Order status updated successfully!')
+        return redirect(f'/staff/order/{id}')
+    return redirect(f'/staff/order/{id}') 
