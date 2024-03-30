@@ -107,7 +107,17 @@ def home(request):
             popular_movies.append(set5)
             set5 = []
 
-    params={'range1':moviesets[0],'range2':moviesets[1:],'latest_range1':latest_movies[0],'latest_range2':latest_movies[1:],'popular_range1':popular_movies[0],'popular_range2':popular_movies[1:] }
+    # Deals of the day movies (To empty stock)
+    movies = Movie.objects.all().order_by('-available_quantity')
+    deals_movies = []
+    set5 = []
+    for movie in movies:
+        set5.append(movie)
+        if len(set5)==5:
+            deals_movies.append(set5)
+            set5 = []
+
+    params={'range1':moviesets[0],'range2':moviesets[1:],'latest_range1':latest_movies[0],'latest_range2':latest_movies[1:],'popular_range1':popular_movies[0],'popular_range2':popular_movies[1:], 'deals_range1':deals_movies[0],'deals_range2':deals_movies[1:]}
     return render(request,'home.html',params)
 
 def contact(request):
