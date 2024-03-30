@@ -18,21 +18,7 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user)
 
-class Staff(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=10)
-    staff_id = models.AutoField(primary_key=True)
-
-    class Meta:
-        permissions = [
-            ('can_view_orders','Can view orders'),
-            ('can_view_users','Can view users'),
-            ('can_view_userprofile','Can view user profile'),
-            ('can_view_movies','Can view movies'),
-            ('can_edit_moviequantity','Can edit movie quantity'),
-        ]
-    
-    
+ 
 class Movie(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
@@ -60,6 +46,7 @@ class Cart_Item(models.Model):
     isrented = models.BooleanField(default=True)
     def __str__(self):
         return str(self.user) + ' ' + str(self.movie)    
+
 
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
