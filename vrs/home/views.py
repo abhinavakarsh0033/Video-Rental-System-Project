@@ -23,6 +23,10 @@ def index(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'Welcome '+user.first_name+'!')
+            if user.is_superuser:
+                return redirect('/admin')
+            elif user.is_staff:
+                return redirect('/staff/home')
             return redirect('/home')    
         else:
             messages.error(request, 'Invalid Credentials!')
@@ -63,8 +67,15 @@ def about(request):
 def home(request):
     if request.user.is_anonymous:
         return redirect('/')
-    #changed
-    
+    #update status of all orders
+    updatestatus()
+
+    #notifying the user about orders that are within 2 days of due date
+    orders = Order.objects.filter(user=request.user)
+    for order in orders:
+        if order.status == 'Not Returned' and order.due_date - timezone.now() < timezone.timedelta(days=2):
+            messages.warning(request, 'Your order for '+order.movie.title+' is due in 2 days. Please return it on time to avoid any penalties.')
+
     movies = Movie.objects.all()
     movies = list(movies)
     shuffle(movies)
@@ -247,6 +258,7 @@ def changepassword(request):
     return render(request, 'changepassword.html', {'form': form})
 
 def orders(request):
+    updatestatus()
     orders = Order.objects.filter(user=request.user)
     params = {'orders':orders}
     return render(request,'orders.html',params)
@@ -326,14 +338,15 @@ def payment(request):
 
 
 def staffhome(request):
+    if not request.user.is_staff:
+        return redirect('/')
     movies = Movie.objects.all()
     params = {'movies':movies}
     return render(request,'staffhome.html', params)
 
-def stafforders(request):
-    return render(request,'stafforders.html')
-
 def increase(request,id):
+    if not request.user.is_staff:
+        return redirect('/')
     movie = Movie.objects.filter(id=id)
     movie = movie[0]
     movie.total_quantity += 1
@@ -342,6 +355,8 @@ def increase(request,id):
     return redirect('/staff/home')
 
 def decrease(request,id):
+    if not request.user.is_staff:
+        return redirect('/')
     movie = Movie.objects.filter(id=id)
     movie = movie[0]
     if movie.available_quantity>0:
@@ -351,6 +366,9 @@ def decrease(request,id):
     return redirect('/staff/home')
 
 def stafforders(request,type):
+    if not request.user.is_staff:
+        return redirect('/')
+    updatestatus()
     #storing all order in a dictionary along with their due date and status
     if type=='rented':
         orders = Order.objects.filter(isrented=True)
@@ -365,11 +383,15 @@ def stafforders(request,type):
     return render(request,'stafforders.html',params)
 
 def staffprofile(request):
+    if not request.user.is_staff:
+        return redirect('/')
     userprofile = UserProfile.objects.filter(user=request.user)
     params = {'userprofile': userprofile[0]}
     return render(request, 'staffprofile.html', params)
 
 def staffchangepassword(request):
+    if not request.user.is_staff:
+        return redirect('/')
     if request.method=='POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
@@ -383,3 +405,14 @@ def staffchangepassword(request):
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'staffchangepassword.html', {'form': form})
+
+def updatestatus():
+    orders = Order.objects.all()
+    for order in orders:
+        if order.status == 'Not Returned' and order.due_date < timezone.now():
+            order.status = 'Overdue'
+            order.save()
+
+def stafforder(request,id):
+    params = {'order':Order.objects.filter(order_id=id)[0]}
+    return render(request,'orderdisplay.html', params)   

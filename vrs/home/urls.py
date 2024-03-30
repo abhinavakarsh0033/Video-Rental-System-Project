@@ -32,4 +32,5 @@ urlpatterns = [
     path("staff/orders/<str:type>",views.stafforders,name='stafforders'),
     path("staff/profile/",views.staffprofile,name='staffprofile'),
     path("staff/changepassword/", views.staffchangepassword, name="staffupdateprofile"),
+    path("staff/order/<int:id>",views.stafforder,name='stafforder'),
 ]
