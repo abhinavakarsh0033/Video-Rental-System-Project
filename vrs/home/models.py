@@ -59,6 +59,7 @@ class Order(models.Model):
     isrented = models.BooleanField(default=True)
     status = models.CharField(max_length=100,choices=[('Not Returned','Not Returned'),('Sold','Sold'),('Overdue','Overdue'), ('Returned','Returned')],default='Not Returned')
     due_date = models.DateTimeField(blank = True, null = True)
+    invoice_id = models.IntegerField(default=0)
 
     def __str__(self):
         if(self.isrented):

@@ -492,10 +492,12 @@ def payment(request):
                 messages.error(request, 'Payment failed!')
                 return redirect('/cart')
         # If all movies are in stock, then proceed with payment
-        messages.success(request, 'Payment Successful! Your order has been placed!')
+        messages.success(request, 'Payment Successful! Your order has been placed! You can view your invoice from orders page')
         #creating a new invoice
         all_order = []
         total_price = 0
+        invoice = Invoice(total_price=total_price)
+        invoice.save()
         for item in cart_items:
             if item.isrented:
                 price = item.movie.rent_price
@@ -508,13 +510,13 @@ def payment(request):
                 due_date = None
             price *= 1.18
             total_price += price
-            order = Order(user=user,movie=item.movie,isrented=item.isrented,total_price=price,order_date=timezone.now(), due_date=due_date, status = status)
+            order = Order(user=user,movie=item.movie,isrented=item.isrented,total_price=price,order_date=timezone.now(), due_date=due_date, status = status, invoice_id = invoice.invoice_id)
             order.save()
             all_order.append(order)
             item.movie.available_quantity -= 1
             item.movie.save()
             item.delete()
-        invoice = Invoice(total_price=total_price)
+        invoice.total_price = total_price
         invoice.save()
         for order in all_order:
             invoice.order.add(order)
@@ -683,17 +685,20 @@ def stafforderupdate(request, id):
     return redirect(f'/staff/order/{id}') 
 
 class GeneratePdf(View):
-     def get(self, request, *args, **kwargs, ):
+     def get(self, request, id, *args, **kwargs, ):
          
         # getting the template
-        invoice = Invoice.objects.filter(invoice_id = 5)[0]
-        #getting order list from invoice
-        orders = Order.objects.filter(order_id = 2)
+        invoice = Invoice.objects.filter(invoice_id = id)[0]
+        #getting order list from invoice orders many to many
+        orders = invoice.order.all()
+        #finding total price
+        with_out_tax = invoice.total_price/1.18
+        tax = invoice.total_price - with_out_tax
         print(orders)
-        params = {'invoice_id':5, 'orders':orders}
+        params = {'invoice_id':8, 'orders':orders, 'invoice':invoice, 'with_out_tax':with_out_tax, 'tax':tax}
         open('templates/temp.html', "w").write(render_to_string('invoice.html', params))
         pdf = html_to_pdf('temp.html')
-         
+
          # rendering the template
         return HttpResponse(pdf, content_type='application/pdf')
 

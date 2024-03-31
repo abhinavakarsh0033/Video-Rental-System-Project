@@ -26,11 +26,11 @@
             background-color: #fff;
             width: 70%;
             margin: 0 auto;
-            margin-top: 5%;
+            margin-top: 50%;
             border-radius: 15px;
         }
         .one {
-            padding: 5%;
+            
         }
         .two
         {
@@ -43,26 +43,31 @@
         {
             margin-bottom: 0;
         }
-        .ok
+        .heading
         {
-            margin-top: 1%;
-            margin-bottom: 1px;
-            margin-left: 100px;
-            font-size: 1.2rem;
-        }
-        .god
-        {
+            border-bottom: 1px solid #333;
+            border-top: 1px solid #333;
+            padding-top: 3px;
             font-weight: bold;
             font-size: 1.2rem;
-            margin-bottom: 1.5%;
         }
-        .four
-        {   
-        }
-        .five
+        .each
         {
-            text-transform: uppercase;
-            font-weight: bold;
+            padding-top: 2px;
+            font-weight: none;
+        }
+        .tax
+        {
+            border-top: 1px solid #333;
+            padding-top: 3px;
+        }
+        .total
+        {
+            border-bottom: 1px solid #333;
+        }
+        .last
+        {
+            padding-top:4px;
         }
     </style>
 </head>
@@ -70,47 +75,61 @@
 
 <body>
     <div class="bill">
+        <h1 class="two">Bill Summary</h1>
+        <h4 class="two">Invoice ID: {{invoice.invoice_id}}</h4>
+        <h4 class="two">{{invoice.invoice_date}}</h4>
+
         <div class="one">
-          <h1 class="two">Bill Summary</h1>
+          <table width="300">
+            <thead>
+                <tr>
+            <th align="left" class="heading">Movie</th>
+            <th class="heading">Type</th>
+            <th align="right" class ="heading">Price</th>
+            </tr>
+            </thead>
 
-          <div class="three">
-            <span class="ok" style="font-weight:bold">Movie.................................................................................................................................................................................................</span>
-            <span class ="ok" style="font-weight:bold">Price</span>
-          </div>
-
-          <hr class="ok">
-
+            <tbody>
           {% for order in orders %}
-          <div class="four">
-            <span class="ok">{{order.movie.title}}</span>
-            <span class="ok">
+          <tr>
+            <th align="left" class="each">{{order.movie.title}}</th>
+            <th class="each">
+                {% if order.movie.isrented == 0 %}
+                    Buy
+                    {% else %}
+                    Rent
+                    {% endif %}
+            </th>
+            <th class="each" align = "right">
               Rs.{% if item.isrented == 0 %}
                   {{order.movie.buy_price}}
                   {% else %}
                   {{order.movie.rent_price}}
                   {% endif %}
-            </span>
-          </div>
+            </th>
+        </tr>
           {% endfor %}
+          
+          
+          <tr class="four">
+              <th align="left"class="tax">Total</th>
+                <th style="border-top:1px solid #333;"></th>
+              <th align="right"class="tax">Rs. {{with_out_tax}}</th>
+          </tr>
+          <tr class="four">
+            <th align="left" class="total">Tax (18%)</th>
+            <th style="border-bottom:1px solid #333;"></th>
+            <th align="right" class="total" >Rs. {{tax}}</th>
+        </tr>
+        </tbody>
 
-          <hr class="ok">
 
-          <div class="four">
-            <div class="god">Total</div>
-            <div class="god">Rs. total_price</div>
-          </div>
-
-          <div class="four">
-            <div class="god">Tax (18%)</div>
-            <div class="god">Rs. god</div>
-          </div>
-
-          <hr class="my-2">
-
-          <div class="four">
-            <h5 class="five">Total price</h5>
-            <h5>Rs.{{invoice.final_price}}</h5>
-          </div>
+          <tr class="four">
+            <th align="left" class="last">Total price</th>
+            <th>
+            </th>
+            <th align="right" class="last">Rs. {{invoice.total_price}}</th>
+          </tr>
 
         </div>
     </div>
