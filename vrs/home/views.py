@@ -236,7 +236,37 @@ def movie(request,id):
         return redirect('/')
     hours = movie[0].runtime.seconds//3600
     minutes = (movie[0].runtime.seconds//60)%60
-    params = {'movie':movie[0], 'hours':hours, 'minutes':minutes}
+
+    # Similar Movies
+    movies = Movie.objects.all()
+    similar = []
+    for m in movies:
+        if len(similar) == 4:
+            break
+        if m.id != movie[0].id:
+            if m.director == movie[0].director:
+                similar.append(m)
+            else:
+                for actor in m.cast.split(", "):
+                    if actor in movie[0].cast.split(", "):
+                        similar.append(m)
+                        break
+    for m in movies:
+        if len(similar) == 4:
+            break
+        if m.id != movie[0].id:
+            if (m.genre == movie[0].genre and m not in similar):
+                similar.append(m)
+    moviesets = []
+    set4 = []
+    for m in similar:
+        set4.append(m)
+        if len(set4)==4:
+            moviesets.append(set4)
+            set4 = []
+    moviesets.append(set4)
+
+    params = {'movie':movie[0], 'hours':hours, 'minutes':minutes, 'moviesets':moviesets}
     return render(request,'movie.html',params)
 
 def profile(request):
@@ -378,7 +408,10 @@ def payment(request):
 def staffhome(request):
     if not request.user.is_staff:
         return redirect('/')
-    movies = Movie.objects.all()
+    movies = Movie.objects.all().order_by('title')
+    for movie in movies:
+        if movie.available_quantity<=0:
+            messages.error(request, 'Movie '+movie.title+' is currently out of stock!')
     params = {'movies':movies}
     return render(request,'staffhome.html', params)
 
@@ -417,6 +450,14 @@ def stafforders(request,type):
 
     #sorting based on order_id
     orders = sorted(orders, key=lambda x: x.order_id, reverse=True)
+
+    # Notifying the staff about orders that are within 1 days of due date or overdue
+    for order in orders:
+        if order.status == 'Not Returned' and order.due_date - timezone.now() < timezone.timedelta(days=1):
+            messages.warning(request, 'Order for '+order.movie.title+' by '+order.user.first_name+' '+order.user.last_name+' is due in 1 day. Please remind the user to return it on time to avoid any penalties.')
+        if order.status == 'Overdue':
+            messages.error(request, 'Order for '+order.movie.title+' by '+order.user.first_name+' '+order.user.last_name+' is overdue. Please take necessary action.')
+
     params = {'orders':orders, 'type':type.capitalize()}
     return render(request,'stafforders.html',params)
 
