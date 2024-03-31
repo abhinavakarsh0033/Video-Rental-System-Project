@@ -107,14 +107,14 @@ Home
 </style>
 
 
-{% comment %} Reccomendations {% endcomment %}
-<h1 style="padding: 10px 0px 0px 80px; color: white; font-family: math; font-weight: bolder">Reccomended For You</h1>
+{% comment %} recommendations {% endcomment %}
+<h1 style="padding: 10px 0px 0px 80px; color: white; font-family: math; font-weight: bolder">Recommended For You</h1>
 <div id="carouselExampleCaptions0" class="carousel carousel-dark slide" data-bs-ride="false">
 
   <div class="carousel-inner">
     <div class="carousel-item active">
       <div class="card-group">
-        {% for j in reccomendations_range1 %}
+        {% for j in recommendations_range1 %}
         <div class="card">
           <a href="/movie/{{j.id}}">
           <img src="{{j.img_url}}" class="card-img-top" id = "movieimage" alt="no image" onerror="this.src='/static/noposter.png';"> 
@@ -128,7 +128,7 @@ Home
       </div>
     </div>
 
-    {% for i in reccomendations_range2 %}
+    {% for i in recommendations_range2 %}
     <div class="carousel-item">
       <div class="card-group">
         {% for j in i %}

@@ -80,24 +80,12 @@ def home(request):
 
     #notifying the user about orders that are within 2 days of due date
     user_movies = []
-    orders = Order.objects.filter(user=request.user)
+    orders = Order.objects.filter(user=request.user).order_by('-order_id')
     for order in orders:
         user_movies.append(order.movie)
         if order.status == 'Not Returned' and order.due_date - timezone.now() < timezone.timedelta(days=2):
             messages.warning(request, 'Your order for '+order.movie.title+' is due in 2 days. Please return it on time to avoid any penalties.')
 
-    # Reccomendation based on user's previous orders
-    similar = []
-    for movie in user_movies:
-        similar = similar_movies(similar,[movie],25)
-    shuffle(similar)
-    reccomendations = []
-    set5 = []
-    for m in similar:
-        set5.append(m)
-        if len(set5)==5:
-            reccomendations.append(set5)
-            set5 = []
 
     # Bestseller Movies (All)
     movies = Movie.objects.all()
@@ -118,6 +106,30 @@ def home(request):
         carousels.append(movie)
         if len(carousels)==5:
             break
+
+    # recommendation based on user's previous orders
+    similar = []
+    if len(user_movies) > 0:
+        n = 3
+        if len(user_movies) <= 8:
+            n = 25//len(user_movies)
+        for movie in user_movies:
+            similar.extend(similar_movies(similar,movie,n))
+            if len(similar) >= 25:
+                break
+    else:
+        similar = movies
+        shuffle(similar)
+    recommendations = []
+    set5 = []
+    for m in similar:
+        if len(recommendations)==5:
+            break
+        set5.append(m)
+        if len(set5)==5:
+            recommendations.append(set5)
+            set5 = []
+    
 
     # Latest Arrivals
     movies = Movie.objects.all().order_by('-release_year')
@@ -155,7 +167,7 @@ def home(request):
             deals_movies.append(set5)
             set5 = []
     movie1 = carousels[0]
-    params={'movie1':movie1,'carousels':carousels[1:],'range1':moviesets[0],'range2':moviesets[1:],'latest_range1':latest_movies[0],'latest_range2':latest_movies[1:],'popular_range1':popular_movies[0],'popular_range2':popular_movies[1:], 'deals_range1':deals_movies[0],'deals_range2':deals_movies[1:],'reccomendations_range1':reccomendations[0],'reccomendations_range2':reccomendations[1:]}
+    params={'movie1':movie1,'carousels':carousels[1:],'range1':moviesets[0],'range2':moviesets[1:],'latest_range1':latest_movies[0],'latest_range2':latest_movies[1:],'popular_range1':popular_movies[0],'popular_range2':popular_movies[1:], 'deals_range1':deals_movies[0],'deals_range2':deals_movies[1:],'recommendations_range1':recommendations[0],'recommendations_range2':recommendations[1:]}
     return render(request,'home.html',params)
 
 def contact(request):
@@ -270,7 +282,7 @@ def movie(request,id):
 
     # Similar Movies
     similar = []
-    similar = similar_movies(similar,movie)
+    similar = similar_movies(similar,movie[0])
     moviesets = []
     set4 = []
     for m in similar:
@@ -285,38 +297,39 @@ def movie(request,id):
 
 def similar_movies(similar,movie,n=4):
     movies = Movie.objects.all()
+    similar_movies = []
     # First check for same director or actor and same genre
     for m in movies:
-        if len(similar) == n:
+        if len(similar_movies) == n:
             break
-        if m.id!=movie[0].id and m.genre == movie[0].genre:
-            if m.director == movie[0].director:
-                similar.append(m)
+        if m.id!=movie.id and m.genre == movie.genre and m not in similar:
+            if m.director == movie.director:
+                similar_movies.append(m)
             else:
                 for actor in m.cast.split(", "):
-                    if actor in movie[0].cast.split(", "):
-                        similar.append(m)
+                    if actor in movie.cast.split(", "):
+                        similar_movies.append(m)
                         break
     # If not found, check for same director or actor
     for m in movies:
-        if len(similar) == n:
+        if len(similar_movies) == n:
             break
-        if m.id!=movie[0].id and m not in similar:
-            if m.director == movie[0].director:
-                similar.append(m)
+        if m.id!=movie.id and m not in similar:
+            if m.director == movie.director:
+                similar_movies.append(m)
             else:
                 for actor in m.cast.split(", "):
-                    if actor in movie[0].cast.split(", "):
-                        similar.append(m)
+                    if actor in movie.cast.split(", "):
+                        similar_movies.append(m)
                         break
     # If not found, check for same genre
     for m in movies:
-        if len(similar) == n:
+        if len(similar_movies) == n:
             break
-        if m.id != movie[0].id:
-            if (m.genre == movie[0].genre and m not in similar):
-                similar.append(m)
-    return similar
+        if m.id != movie.id:
+            if (m.genre == movie.genre and m not in similar):
+                similar_movies.append(m)
+    return similar_movies
 
 def profile(request):
     userprofile = UserProfile.objects.filter(user=request.user)
