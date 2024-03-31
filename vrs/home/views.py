@@ -445,8 +445,14 @@ def carttoggle(request, id, flag):
 def payment(request):
     user = request.user
     if(request.method=='POST'):
-        messages.success(request, 'Payment Successful! Your order has been placed!')
+        # First check that all movies are in stock
         cart_items = Cart_Item.objects.filter(user=request.user)
+        for item in cart_items:
+            if item.movie.available_quantity<=0:
+                messages.error(request, 'Payment failed!')
+                return redirect('/cart')
+        # If all movies are in stock, then proceed with payment
+        messages.success(request, 'Payment Successful! Your order has been placed!')
         for item in cart_items:
             if item.isrented:
                 price = item.movie.rent_price
