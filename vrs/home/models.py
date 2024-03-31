@@ -69,7 +69,7 @@ class Order(models.Model):
 class Invoice(models.Model):
     #one invoice has list of orders
     invoice_id = models.AutoField(primary_key=True)
-    order = models.ManyToManyField(Order)
+    order = models.ManyToManyField(Order, related_name='orders')
     invoice_date = models.DateTimeField(auto_now_add=True)
     total_price = models.FloatField()
     def __str__(self):

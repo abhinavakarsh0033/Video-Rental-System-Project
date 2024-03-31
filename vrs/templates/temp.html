@@ -75,23 +75,21 @@
 
           <div class="three">
             <span class="ok" style="font-weight:bold">Movie.................................................................................................................................................................................................</span>
-            <span class ="ok" style="font-weight:bold">Price</span>
+            <span class ="ok"style="font-weight:bold">Price</span>
           </div>
 
           <hr class="ok">
 
-          {% for order in orders %}
+          
           <div class="four">
-            <span class="ok">{{order.movie.title}}</span>
+            <span class="ok">Stree</span>
             <span class="ok">
-              Rs.{% if item.isrented == 0 %}
-                  {{order.movie.buy_price}}
-                  {% else %}
-                  {{order.movie.rent_price}}
-                  {% endif %}
+              Rs.
+                  450.0
+                  
             </span>
           </div>
-          {% endfor %}
+          
 
           <hr class="ok">
 
@@ -109,7 +107,7 @@
 
           <div class="four">
             <h5 class="five">Total price</h5>
-            <h5>Rs.{{invoice.final_price}}</h5>
+            <h5>Rs.</h5>
           </div>
 
         </div>

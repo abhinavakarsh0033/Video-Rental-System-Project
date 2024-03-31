@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from home import views
+from home.views import GeneratePdf
 
 urlpatterns = [
     path("",views.index,name="login"),
@@ -35,4 +36,5 @@ urlpatterns = [
     path("staff/changepassword/", views.staffchangepassword, name="staffupdateprofile"),
     path("staff/order/<int:id>",views.stafforder,name='stafforder'),
     path("stafforderupdate/<int:id>",views.stafforderupdate,name='stafforderupdate'),
+    path("pdf/<int:id>",GeneratePdf.as_view(),name='pdf'),
 ]

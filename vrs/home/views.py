@@ -19,6 +19,8 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+from django.views import View
+from django.template.loader import render_to_string
 
 
 import requests
@@ -486,8 +488,7 @@ def payment(request):
             invoice.order.add(order)
             invoice.save()
         print("Invoice ID: ",invoice.invoice_id)
-        generate_pdf(request, invoice.invoice_id)
-        # return redirect('/home')   
+        return redirect('/home') 
     return render(request,'payment.html')    
 
 
@@ -630,19 +631,29 @@ def stafforderupdate(request, id):
         return redirect(f'/staff/order/{id}')
     return redirect(f'/staff/order/{id}') 
 
-def generate_pdf(request, id):
-    invoice = Invoice.objects.filter(invoice_id=id)[0]
-    orders = invoice.order.all()
-    params = {'invoice':invoice, 'orders':orders}
-    template_path = 'invoice.html'
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="invoice.pdf"'
-    template = get_template(template_path)
-    html = template.render(params)
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse('We had some errors <pre>' + html + '</pre>')
-    return response
+class GeneratePdf(View):
+     def get(self, request, *args, **kwargs, ):
+         
+        # getting the template
+        invoice = Invoice.objects.filter(invoice_id = 5)[0]
+        #getting order list from invoice
+        orders = Order.objects.filter(order_id = 2)
+        print(orders)
+        params = {'invoice_id':5, 'orders':orders}
+        open('templates/temp.html', "w").write(render_to_string('invoice.html', params))
+        pdf = html_to_pdf('temp.html')
+         
+         # rendering the template
+        return HttpResponse(pdf, content_type='application/pdf')
+
+def html_to_pdf(template_src, context_dict={}):
+     template = get_template(template_src)
+     html  = template.render(context_dict)
+     result = BytesIO()
+     pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+     if not pdf.err:
+         return HttpResponse(result.getvalue(), content_type='application/pdf')
+     return None
 
 def gen_movies(count, region):
     for i in range(1,500):
