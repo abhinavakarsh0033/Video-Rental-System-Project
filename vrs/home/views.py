@@ -68,7 +68,8 @@ def signup(request):
     return render(request,'signup.html')
 
 def about(request):
-    gen_movies(10)
+    # gen_movies(500, "IN")
+    # gen_movies(500, "US")
     return render(request,'about.html')
 
 def home(request):
@@ -89,6 +90,8 @@ def home(request):
     moviesets = []
     set5 = []
     for movie in movies:
+        if len(moviesets)==5:
+            break
         set5.append(movie)
         if len(set5)==5:
             moviesets.append(set5)
@@ -99,6 +102,8 @@ def home(request):
     latest_movies = []
     set5 = []
     for movie in movies:
+        if len(latest_movies)==5:
+            break
         set5.append(movie)
         if len(set5)==5:
             latest_movies.append(set5)
@@ -109,6 +114,8 @@ def home(request):
     popular_movies = []
     set5 = []
     for movie in movies:
+        if len(popular_movies)==5:
+            break
         set5.append(movie)
         if len(set5)==5:
             popular_movies.append(set5)
@@ -119,6 +126,8 @@ def home(request):
     deals_movies = []
     set5 = []
     for movie in movies:
+        if len(deals_movies)==5:
+            break
         set5.append(movie)
         if len(set5)==5:
             deals_movies.append(set5)
@@ -240,10 +249,12 @@ def movie(request,id):
     # Similar Movies
     movies = Movie.objects.all()
     similar = []
+
+    # First check for same director or actor and same genre
     for m in movies:
         if len(similar) == 4:
             break
-        if m.id != movie[0].id:
+        if m.id!=movie[0].id and m.genre == movie[0].genre:
             if m.director == movie[0].director:
                 similar.append(m)
             else:
@@ -251,6 +262,19 @@ def movie(request,id):
                     if actor in movie[0].cast.split(", "):
                         similar.append(m)
                         break
+    # If not found, check for same director or actor
+    for m in movies:
+        if len(similar) == 4:
+            break
+        if m.id!=movie[0].id and m not in similar:
+            if m.director == movie[0].director:
+                similar.append(m)
+            else:
+                for actor in m.cast.split(", "):
+                    if actor in movie[0].cast.split(", "):
+                        similar.append(m)
+                        break
+    # If not found, check for same genre
     for m in movies:
         if len(similar) == 4:
             break
@@ -544,17 +568,17 @@ def stafforderupdate(request, id):
         return redirect(f'/staff/order/{id}')
     return redirect(f'/staff/order/{id}') 
 
-def gen_movies(count):
-    #getting popular movies id
-    url_popular = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1&region=US"
-    for i in range(1,6):
-        url_popular = f"https://api.themoviedb.org/3/movie/popular?language=en-US&page={i}&region=US"
+def gen_movies(count, region):
+    for i in range(1,500):
+        url_popular = f"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page={i}&sort_by=popularity.desc&with_origin_country={region}"
         response_popular = requests.get(url_popular, headers=headers)
         data_popular = response_popular.json()
         for movie in data_popular['results']:
             movie_id = movie['id']
             get_movie_data(movie_id)
             count -= 1
+            if count%10 == 0:
+                print(count)
             if count == 0:
                 break
         if count == 0:
@@ -589,6 +613,8 @@ def get_movie_data(movie_id):
     #         print(crew['name'])
     title = data['title']
     desc = data['overview']
+    if(data['poster_path'] == None or data['backdrop_path'] == None):
+        return
     img_url = 'https://image.tmdb.org/t/p/original' + data['poster_path']
     backdrop_url = 'https://image.tmdb.org/t/p/original' + data['backdrop_path']
 
@@ -604,8 +630,12 @@ def get_movie_data(movie_id):
 
     #don't add comma for last iteration
     cast = ''
+    if len(data_credits['cast']) == 0:
+        return
     for i in range(3):
         cast += data_credits['cast'][i]['name']
+        if i == len(data_credits['cast'])-1:
+            break
         if i != 2:
             cast += ', '
 
@@ -617,6 +647,8 @@ def get_movie_data(movie_id):
 
     #rating upto one decimal place
     rating = data['vote_average']
+    if rating == 0 or rating == None:
+        return
     rating = round(rating,1)
 
     available_certifications = ['U','U/A','A']
@@ -646,27 +678,13 @@ def get_movie_data(movie_id):
 
     total_quantity = random.randint(10,15)
 
+    #if anything is none then return
+    if title == None or desc == None or img_url == None or backdrop_url == None or release_year == None or genre == None or cast == None or director == None or rating == None or certification == None or rent_price == None or buy_price == None or rent_duration == None or runtime == None or total_quantity == None:
+        return
+
     #creating movie object
     movie = Movie(title=title, desc=desc, img_url=img_url, backdrop_url=backdrop_url, release_year=release_year, genre=genre, cast=cast, director=director, rating=rating, certification=certification, rent_price=rent_price, buy_price=buy_price, rent_duration=rent_duration,runtime = runtime, total_quantity=total_quantity, available_quantity = total_quantity)
     movie.save()
-
-
-    # printing the data first
-    print(title)
-    print(desc)
-    print(img_url)
-    print(backdrop_url)
-    # print(release_year)
-    print(genre)
-    print(cast)
-    print(director)
-    print(rating)
-    print(certification)
-    print(rent_price)
-    print(buy_price)
-    print(rent_duration)
-    # print(runtime)
-    print(total_quantity)
 
 
 # movie_id = 157336

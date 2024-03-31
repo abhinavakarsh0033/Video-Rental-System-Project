@@ -10,7 +10,7 @@
     aspect-ratio: 16/9;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 1),
       rgba(0, 0, 0, 0.4)),
-    url("/media/{{movie.img}}");
+    url("{{movie.backdrop_url}}");
 
     background-size: cover;
   }
@@ -178,7 +178,7 @@
         {% for movie in i %}
         <div class="card">
         <a href="/movie/{{movie.id}}">
-            <img id="movieimage" src='/media/{{movie.img}}' class="card-img-top" alt="no image" onerror="this.src='static/noposter.png';">
+            <img id="movieimage" src='{{movie.img_url}}' class="card-img-top" alt="no image" onerror="this.src='static/noposter.png';">
         </a>
         <div class="card-body">
             <h5 class="card-title">{{movie.title}}</h5>
