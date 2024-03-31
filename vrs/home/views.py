@@ -10,9 +10,15 @@ from home.models import Movie
 from random import shuffle
 from home.models import Cart_Item
 from home.models import Order
+from home.models import Invoice
 from django.utils import timezone
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 
 import requests
@@ -453,6 +459,9 @@ def payment(request):
                 return redirect('/cart')
         # If all movies are in stock, then proceed with payment
         messages.success(request, 'Payment Successful! Your order has been placed!')
+        #creating a new invoice
+        all_order = []
+        total_price = 0
         for item in cart_items:
             if item.isrented:
                 price = item.movie.rent_price
@@ -464,12 +473,21 @@ def payment(request):
                 status = 'Sold'
                 due_date = None
             price *= 1.18
+            total_price += price
             order = Order(user=user,movie=item.movie,isrented=item.isrented,total_price=price,order_date=timezone.now(), due_date=due_date, status = status)
             order.save()
+            all_order.append(order)
             item.movie.available_quantity -= 1
             item.movie.save()
             item.delete()
-        return redirect('/home')   
+        invoice = Invoice(total_price=total_price)
+        invoice.save()
+        for order in all_order:
+            invoice.order.add(order)
+            invoice.save()
+        print("Invoice ID: ",invoice.invoice_id)
+        generate_pdf(request, invoice.invoice_id)
+        # return redirect('/home')   
     return render(request,'payment.html')    
 
 
@@ -611,6 +629,20 @@ def stafforderupdate(request, id):
         messages.success(request, 'Order status updated successfully!')
         return redirect(f'/staff/order/{id}')
     return redirect(f'/staff/order/{id}') 
+
+def generate_pdf(request, id):
+    invoice = Invoice.objects.filter(invoice_id=id)[0]
+    orders = invoice.order.all()
+    params = {'invoice':invoice, 'orders':orders}
+    template_path = 'invoice.html'
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="invoice.pdf"'
+    template = get_template(template_path)
+    html = template.render(params)
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
 
 def gen_movies(count, region):
     for i in range(1,500):

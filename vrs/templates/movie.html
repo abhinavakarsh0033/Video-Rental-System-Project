@@ -100,10 +100,18 @@
   }
   #movieimage 
   {
-      aspect-ratio: 2/3;
-      border-collapse: separate;
-      border-radius: 10px;
-      margin-bottom: 10px;
+    aspect-ratio: 2/3;
+    border-collapse: separate;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+  .my
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
 </style>
@@ -183,7 +191,7 @@
         <div class="card-body">
             <h5 class="card-title">{{movie.title}}</h5>
             <p class="card-text"><small class="text-muted">{{movie.release_year.year}}</small></p>
-            <p class="card-text">{{movie.desc}}</p>
+            <p class="card-text my">{{movie.desc}}</p>
             <p class="card-text"><small class="text-muted">{{movie.runtime}}</small></p>
         </div>
         </div>

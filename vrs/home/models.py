@@ -65,3 +65,12 @@ class Order(models.Model):
             return str(self.user) + ' rented ' + str(self.movie)
         else:
             return str(self.user) + ' bought ' + str(self.movie)
+        
+class Invoice(models.Model):
+    #one invoice has list of orders
+    invoice_id = models.AutoField(primary_key=True)
+    order = models.ManyToManyField(Order)
+    invoice_date = models.DateTimeField(auto_now_add=True)
+    total_price = models.FloatField()
+    def __str__(self):
+        return str(self.order)

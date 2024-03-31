@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Summary</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+            color: #000;
+        }
+        h3 {
+            text-align: center;
+        }
+        h5 {
+            font-size: 1.2rem;
+        }
+        hr {
+            border: 1px solid #000;
+        }
+        .bill {
+            background-color: #fff;
+            width: 70%;
+            margin: 0 auto;
+            margin-top: 5%;
+            border: 6px solid #000;
+            border-radius: 15px;
+        }
+        .one {
+            padding: 5%;
+        }
+        .two
+        {
+            font-weight: bold;
+            margin-bottom: 5%;
+            margin-top: 2%;
+            padding-top: 1%;
+        }
+        .three
+        {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0;
+        }
+        .ok
+        {
+            margin-top: 1%;
+            margin-bottom: 1%;
+        }
+        .god
+        {
+            font-weight: bold;
+        }
+        .four
+        {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1%;
+        }
+        .five
+        {
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="bill">
+        <div class="one">
+          <h3 class="two">Bill Summary</h3>
+
+          <div class="three">
+            <h5 style="font-weight:bold">Movie</h5>
+            <h5 style="font-weight:bold">Price</h5>
+          </div>
+
+          <hr class="ok">
+
+          {% for order in orders %}
+          <div class="four">
+            <h5 class="">{{order.movie.title}}</h5>
+            <h5>
+              ₹{% if item.isrented == 0 %}
+                  {{order.movie.buy_price}}
+                  {% else %}
+                  {{order.movie.rent_price}}
+                  {% endif %}
+            </h5>
+          </div>
+          {% endfor %}
+
+          <hr class="god">
+
+          <div class="four">
+            <h5 class="god">Total</h5>
+            <h5>₹total_price</h5>
+          </div>
+
+          <div class="four">
+            <h5 class="god">Tax (18%)</h5>
+            <h5>₹god</h5>
+          </div>
+
+          <hr class="my-2">
+
+          <div class="four">
+            <h5 class="five">Total price</h5>
+            <h5>₹{{invoice.final_price}}</h5>
+          </div>
+
+        </div>
+    </div>
+</body>
