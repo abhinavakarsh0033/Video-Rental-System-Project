@@ -96,6 +96,12 @@ def home(request):
         if len(set5)==5:
             moviesets.append(set5)
             set5 = []
+    shuffle(movies)
+    carousels = []
+    for movie in movies:
+        carousels.append(movie)
+        if len(carousels)==5:
+            break
 
     # Latest Arrivals
     movies = Movie.objects.all().order_by('-release_year')
@@ -132,8 +138,8 @@ def home(request):
         if len(set5)==5:
             deals_movies.append(set5)
             set5 = []
-
-    params={'range1':moviesets[0],'range2':moviesets[1:],'latest_range1':latest_movies[0],'latest_range2':latest_movies[1:],'popular_range1':popular_movies[0],'popular_range2':popular_movies[1:], 'deals_range1':deals_movies[0],'deals_range2':deals_movies[1:]}
+    movie1 = carousels[0]
+    params={'movie1':movie1,'carousels':carousels[1:],'range1':moviesets[0],'range2':moviesets[1:],'latest_range1':latest_movies[0],'latest_range2':latest_movies[1:],'popular_range1':popular_movies[0],'popular_range2':popular_movies[1:], 'deals_range1':deals_movies[0],'deals_range2':deals_movies[1:]}
     return render(request,'home.html',params)
 
 def contact(request):
