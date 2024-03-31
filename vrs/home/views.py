@@ -29,14 +29,19 @@ import random
 import datetime
 
 # Create your views here.
+
+# Login Page
 def index(request):
+    # Already logged in
     if request.user.is_authenticated:
         return redirect('/home')
+    # Authenticate the user
     if request.method=='POST':
         user = authenticate(username=request.POST.get('email'),password=request.POST.get('password'))
         if user is not None:
             login(request, user)
             messages.success(request, 'Welcome '+user.first_name+'!')
+            # Redirect to respective home page
             if user.is_superuser:
                 return redirect('/admin')
             elif user.is_staff:
@@ -48,8 +53,10 @@ def index(request):
             
     return render(request,'index.html')
 
+# Signup Page
 def signup(request):
     if request.method=='POST':
+        # Get the form data
         name = request.POST.get('name')
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -64,6 +71,7 @@ def signup(request):
             messages.error(request, 'Email already exists!')
             return render(request,'signup.html')
        
+        # Create the user
         user = User.objects.create_user(username=email, email=email, password=password, first_name=firstname, last_name=lastname)
         user.save()
         userprofile = UserProfile(user=user,phone=phone)
@@ -71,15 +79,14 @@ def signup(request):
 
         messages.success(request, 'Your account has been created!')
         return redirect('/')
-
-    # messages.error(request, 'Invalid Credentials!')    
+   
     return render(request,'signup.html')
 
+# About Page
 def about(request):
-    # gen_movies(500, "IN")
-    # gen_movies(500, "US")
     return render(request,'about.html')
 
+# Home Page
 def home(request):
     if request.user.is_anonymous:
         return redirect('/')
@@ -93,7 +100,6 @@ def home(request):
         user_movies.append(order.movie)
         if order.status == 'Not Returned' and order.due_date - timezone.now() < timezone.timedelta(days=2):
             messages.warning(request, 'Your order for '+order.movie.title+' is due in 2 days. Please return it on time to avoid any penalties.')
-
 
     # Bestseller Movies (All)
     movies = Movie.objects.all()
@@ -138,7 +144,6 @@ def home(request):
             recommendations.append(set5)
             set5 = []
     
-
     # Latest Arrivals
     movies = Movie.objects.all().order_by('-release_year')
     latest_movies = []
@@ -175,16 +180,16 @@ def home(request):
             deals_movies.append(set5)
             set5 = []
     movie1 = carousels[0]
+
     params={'movie1':movie1,'carousels':carousels[1:],'range1':moviesets[0],'range2':moviesets[1:],'latest_range1':latest_movies[0],'latest_range2':latest_movies[1:],'popular_range1':popular_movies[0],'popular_range2':popular_movies[1:], 'deals_range1':deals_movies[0],'deals_range2':deals_movies[1:],'recommendations_range1':recommendations[0],'recommendations_range2':recommendations[1:]}
     return render(request,'home.html',params)
 
-def contact(request):
-    return render(request,'contact.html')
-
+# Signout
 def signout(request):
     logout(request)
     return redirect('/')
 
+# Action Movies
 def action(request):
     action_movies = Movie.objects.filter(genre='Action')
     moviesets = []
@@ -198,6 +203,7 @@ def action(request):
     params = {'moviesets':moviesets, 'title':'Action Movies', 'heading':'Action Movies'}
     return render(request,'display.html',params)
 
+# Comedy Movies
 def comedy(request):
     comedy_movies = Movie.objects.filter(genre='Comedy')
     moviesets = []
@@ -211,6 +217,7 @@ def comedy(request):
     params = {'moviesets':moviesets, 'title':'Comedy Movies', 'heading':'Comedy Movies'}
     return render(request,'display.html',params)
 
+# Drama Movies
 def drama(request):
     drama_movies = Movie.objects.filter(genre='Drama')
     moviesets = []
@@ -224,6 +231,7 @@ def drama(request):
     params = {'moviesets':moviesets, 'title':'Drama Movies', 'heading':'Drama Movies'}
     return render(request,'display.html',params)
 
+# Horror Movies
 def horror(request):
     horror_movies = Movie.objects.filter(genre='Horror')
     moviesets = []
@@ -237,6 +245,7 @@ def horror(request):
     params = {'moviesets':moviesets, 'title':'Horror Movies', 'heading':'Horror Movies'}
     return render(request,'display.html',params)
 
+# Romance Movies
 def romance(request):
     romance_movies = Movie.objects.filter(genre='Romance')
     moviesets = []
@@ -250,6 +259,7 @@ def romance(request):
     params = {'moviesets':moviesets, 'title':'Romance Movies', 'heading':'Romance Movies'}
     return render(request,'display.html',params)
 
+# Thriller Movies
 def thriller(request):
     thriller_movies = Movie.objects.filter(genre='Thriller')
     moviesets = []
@@ -263,11 +273,13 @@ def thriller(request):
     params = {'moviesets':moviesets, 'title':'Thriller Movies', 'heading':'Thriller Movies'}
     return render(request,'display.html',params)
 
+# Search Movies
 def search(request):
     query = request.GET.get('search')
     allMovies = Movie.objects.all()
     movies = []
     for movie in allMovies:
+        # Check if query substring is present in title, genre or cast
         if query.lower() in movie.title.lower() or query.lower() in movie.genre.lower() or query.lower() in movie.cast.lower():
             movies.append(movie)
     moviesets = []
@@ -281,6 +293,7 @@ def search(request):
     params = {'moviesets':moviesets, 'title':'Search Results', 'heading':"Search Results for '"+query+"'"}
     return render(request,'display.html',params)
 
+# Movie Page
 def movie(request,id):
     movie = Movie.objects.filter(id=id)
     if(len(movie)==0):
@@ -303,6 +316,7 @@ def movie(request,id):
     params = {'movie':movie[0], 'hours':hours, 'minutes':minutes, 'moviesets':moviesets}
     return render(request,'movie.html',params)
 
+# Function to get similar movies
 def similar_movies(similar,movie,n=4):
     movies = Movie.objects.all()
     similar_movies = []
@@ -339,11 +353,13 @@ def similar_movies(similar,movie,n=4):
                 similar_movies.append(m)
     return similar_movies
 
+# Profile Page
 def profile(request):
     userprofile = UserProfile.objects.filter(user=request.user)
     params = {'userprofile': userprofile[0]}
     return render(request, 'profile.html', params)
 
+# Update Profile Page
 def updateprofile(request):
     if request.method=='POST':
         user = request.user 
@@ -354,6 +370,8 @@ def updateprofile(request):
         gender = request.POST.get('gender')
         userprofile = UserProfile.objects.filter(user=request.user)
         userprofile = userprofile[0]
+
+        # Update the user details
         if name!="":
             user.first_name = name.split(' ')[0]
             user.last_name = ''
@@ -362,7 +380,7 @@ def updateprofile(request):
         if email!="":
             temp_user = User.objects.filter(username=email)
             if temp_user != user:
-                messages.error(request,"This email is already registered")
+                messages.error(request,"This email is already registered with another user")    # Email already exists
                 params = {'userprofile': userprofile}
                 return render(request, 'profile.html', params)
             user.username = email
@@ -374,19 +392,22 @@ def updateprofile(request):
             userprofile.dob = dob
         userprofile.gender = gender
         userprofile.save()
-        messages.success(request, 'Profile Updated Successfully !')
+        messages.success(request, 'Profile Updated Successfully !')   # Profile updated successfully alert
 
         return redirect('/profile')
     return render(request, 'updateprofile.html')
 
+# Change Password Page
 def changepassword(request):
     if request.method=='POST':
         form = PasswordChangeForm(request.user, request.POST)
+        # Check if form is valid
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Password Changed Successfully !')
             return redirect('/profile')
+        # Else show the error message
         else:
             messages.error(request, "Please correct the error below.")
             return render(request, 'changepassword.html', {'form': form})
@@ -394,20 +415,24 @@ def changepassword(request):
         form = PasswordChangeForm(request.user)
     return render(request, 'changepassword.html', {'form': form})
 
+# Orders Page
 def orders(request):
+    # Update the status of all orders before displaying
     updatestatus()
     orders = Order.objects.filter(user=request.user)
     orders = sorted(orders, key=lambda x: x.order_id, reverse=True)
     params = {'orders':orders}
     return render(request,'orders.html',params)
 
+# Add to Cart
 def add_to_cart(request,id):
     movie = Movie.objects.filter(id=id)
+
+    # Check if movie is in stock
     if movie[0].available_quantity<=0:
         messages.error(request, 'Movie currently out of stock!')
         return redirect('/movie/'+str(id))
     cart_item = Cart_Item(user=request.user,movie=movie[0],isrented=True)
-    # print(cart_item)
     all_cart_items = Cart_Item.objects.filter(user=request.user,movie=movie[0])
     if len(all_cart_items)==0:
         cart_item.save()
@@ -420,6 +445,7 @@ def add_to_cart(request,id):
     print(all_cart_items)
     return redirect('/movie/'+str(id))
 
+# Remove from Cart
 def remove_from_cart(request,id):
     movie = Movie.objects.filter(id=id)
     cart_item = Cart_Item.objects.filter(user=request.user,movie=movie[0])
@@ -427,10 +453,12 @@ def remove_from_cart(request,id):
     messages.success(request, 'Movie removed from cart!')
     return redirect('/cart')
 
+# Cart Page
 def cart(request):
     cart_items = Cart_Item.objects.filter(user=request.user)
     total_price = 0.0
     for item in cart_items:
+        # Check if movie is in stock
         if item.movie.available_quantity<=0:
             messages.error(request, 'Movie '+item.movie.title+' is currently out of stock! Please remove it from the cart.')
             continue
@@ -438,11 +466,14 @@ def cart(request):
             total_price += item.movie.rent_price
         else:
             total_price += item.movie.buy_price
+    # Calculate tax and final price
     tax = total_price*0.18
     final_price = total_price + tax
+
     params = {'cart_items':cart_items, 'total_price':total_price, 'tax':tax, 'final_price':final_price}
     return render(request,'cart.html',params)
 
+# Toggle between Rent and Buy
 def carttoggle(request, id, flag):
     cart_item = Cart_Item.objects.filter(user=request.user,movie = Movie.objects.filter(id=id)[0])
     cart_item = cart_item[0]
@@ -450,6 +481,7 @@ def carttoggle(request, id, flag):
     cart_item.save()
     return redirect('/cart')
 
+# Payment Page
 def payment(request):
     user = request.user
     if(request.method=='POST'):
@@ -491,17 +523,22 @@ def payment(request):
         return redirect('/home') 
     return render(request,'payment.html')    
 
-
+# Staff Home Page
 def staffhome(request):
     if not request.user.is_staff:
         return redirect('/')
+    # Movies are sorted by title
     movies = Movie.objects.all().order_by('title')
+
+    # Notify the staff about movies that are out of stock
     for movie in movies:
         if movie.available_quantity<=0:
             messages.error(request, 'Movie '+movie.title+' is currently out of stock!')
+
     params = {'movies':movies}
     return render(request,'staffhome.html', params)
 
+# Increase Quantity of a Movie
 def increase(request,id):
     if not request.user.is_staff:
         return redirect('/')
@@ -512,6 +549,7 @@ def increase(request,id):
     movie.save()
     return redirect('/staff/home')
 
+# Decrease Quantity of a Movie
 def decrease(request,id):
     if not request.user.is_staff:
         return redirect('/')
@@ -523,11 +561,14 @@ def decrease(request,id):
         movie.save()
     return redirect('/staff/home')
 
+# Staff Orders Page
 def stafforders(request,type):
     if not request.user.is_staff:
         return redirect('/')
+    # Update the status of all orders before displaying
     updatestatus()
-    #storing all order in a dictionary along with their due date and status
+
+    # Storing all order in a dictionary along with their due date and status
     if type=='rented':
         orders = Order.objects.filter(isrented=True)
     elif type=='bought':
@@ -535,7 +576,7 @@ def stafforders(request,type):
     elif type=='all':
         orders = Order.objects.all()
 
-    #sorting based on order_id
+    # Sorting based on order_id
     orders = sorted(orders, key=lambda x: x.order_id, reverse=True)
 
     # Notifying the staff about orders that are within 1 days of due date or overdue
@@ -548,6 +589,7 @@ def stafforders(request,type):
     params = {'orders':orders, 'type':type.capitalize()}
     return render(request,'stafforders.html',params)
 
+# Staff Profile Page
 def staffprofile(request):
     if not request.user.is_staff:
         return redirect('/')
@@ -555,6 +597,7 @@ def staffprofile(request):
     params = {'userprofile': userprofile[0]}
     return render(request, 'staffprofile.html', params)
 
+# Staff Update Profile Page
 def staffupdateprofile(request):
     if request.method=='POST':
         user = request.user 
@@ -565,6 +608,8 @@ def staffupdateprofile(request):
         gender = request.POST.get('gender')
         userprofile = UserProfile.objects.filter(user=request.user)
         userprofile = userprofile[0]
+
+        # Update the user details
         if name!="":
             user.first_name = name.split(' ')[0]
             user.last_name = ''
@@ -573,7 +618,7 @@ def staffupdateprofile(request):
         if email!="":
             temp_user = User.objects.filter(username=email)
             if temp_user != user:
-                messages.error(request,"This email is already registered")
+                messages.error(request,"This email is already registered with another user")  # Email already exists
                 params = {'userprofile': userprofile}
                 return render(request, 'profile.html', params)
             user.username = email
@@ -585,21 +630,24 @@ def staffupdateprofile(request):
             userprofile.dob = dob
         userprofile.gender = gender
         userprofile.save()
-        messages.success(request, 'Profile Updated Successfully !')
+        messages.success(request, 'Profile Updated Successfully !')  # Profile updated successfully alert
 
         return redirect('/staff/profile')
     return render(request, 'staffupdateprofile.html')
 
+# Staff Change Password Page
 def staffchangepassword(request):
     if not request.user.is_staff:
         return redirect('/')
     if request.method=='POST':
         form = PasswordChangeForm(request.user, request.POST)
+        # Check if form is valid
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Password Changed Successfully !')
             return redirect('/staff/profile')
+        # Else show the error message
         else:
             messages.error(request, "Please correct the error below.")
             return render(request, 'staffchangepassword.html', {'form': form})
@@ -607,19 +655,22 @@ def staffchangepassword(request):
         form = PasswordChangeForm(request.user)
     return render(request, 'staffchangepassword.html', {'form': form})
 
+# Function to update status of all orders
 def updatestatus():
     orders = Order.objects.all()
     for order in orders:
+        # If order is not returned and due date has passed, then set status to Overdue
         if order.status == 'Not Returned' and order.due_date < timezone.now():
             order.status = 'Overdue'
             order.save()
 
+# Staff Order Page
 def stafforder(request,id):
     updatestatus()
     params = {'order':Order.objects.filter(order_id=id)[0]}
     return render(request,'orderdisplay.html', params)  
 
-
+# Staff Order Update
 def stafforderupdate(request, id):
     if request.method == 'POST':
         status = request.POST.get('status')
@@ -655,6 +706,7 @@ def html_to_pdf(template_src, context_dict={}):
          return HttpResponse(result.getvalue(), content_type='application/pdf')
      return None
 
+# Function to generate movies
 def gen_movies(count, region):
     for i in range(1,500):
         url_popular = f"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page={i}&sort_by=popularity.desc&with_origin_country={region}"
@@ -670,12 +722,12 @@ def gen_movies(count, region):
                 break
         if count == 0:
             break
-
 headers = {
     "accept": "application/json",
     "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0YWIyYjU1ZDMzNjhlNTc1NzEzNTAyYzk4NmVhMmNjMyIsInN1YiI6IjY2MDhmMmVlMmZhZjRkMDE3ZGNhZGQxOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Xb7EhA3AnXbWpZXA1IaBQwRLhgmsy-iSHBZrllONAUI"
 }
 
+# Function to get movie data
 def get_movie_data(movie_id):
     #url to get movie details
     url = f"https://api.themoviedb.org/3/movie/{movie_id}?language=en-US"
@@ -772,9 +824,3 @@ def get_movie_data(movie_id):
     #creating movie object
     movie = Movie(title=title, desc=desc, img_url=img_url, backdrop_url=backdrop_url, release_year=release_year, genre=genre, cast=cast, director=director, rating=rating, certification=certification, rent_price=rent_price, buy_price=buy_price, rent_duration=rent_duration,runtime = runtime, total_quantity=total_quantity, available_quantity = total_quantity)
     movie.save()
-
-
-# movie_id = 157336
-# get_movie_data(movie_id)
-
-
