@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.db import models
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib.auth.forms import UserCreationForm
@@ -13,6 +14,11 @@ from django.utils import timezone
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 
+
+import requests
+import json
+import random
+import datetime
 
 # Create your views here.
 def index(request):
@@ -62,6 +68,7 @@ def signup(request):
     return render(request,'signup.html')
 
 def about(request):
+    gen_movies(10)
     return render(request,'about.html')
 
 def home(request):
@@ -495,3 +502,133 @@ def stafforderupdate(request, id):
         messages.success(request, 'Order status updated successfully!')
         return redirect(f'/staff/order/{id}')
     return redirect(f'/staff/order/{id}') 
+
+def gen_movies(count):
+    #getting popular movies id
+    url_popular = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1&region=US"
+    for i in range(1,6):
+        url_popular = f"https://api.themoviedb.org/3/movie/popular?language=en-US&page={i}&region=US"
+        response_popular = requests.get(url_popular, headers=headers)
+        data_popular = response_popular.json()
+        for movie in data_popular['results']:
+            movie_id = movie['id']
+            get_movie_data(movie_id)
+            count -= 1
+            if count == 0:
+                break
+        if count == 0:
+            break
+
+headers = {
+    "accept": "application/json",
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0YWIyYjU1ZDMzNjhlNTc1NzEzNTAyYzk4NmVhMmNjMyIsInN1YiI6IjY2MDhmMmVlMmZhZjRkMDE3ZGNhZGQxOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Xb7EhA3AnXbWpZXA1IaBQwRLhgmsy-iSHBZrllONAUI"
+}
+
+def get_movie_data(movie_id):
+    #url to get movie details
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}?language=en-US"
+    response = requests.get(url, headers=headers)
+
+    #url to get movie credits
+    url_credits = f"https://api.themoviedb.org/3/movie/{movie_id}/credits?language=en-US"
+    response_credits = requests.get(url_credits, headers=headers)
+
+    #url to get certification
+    url_certification = f"https://api.themoviedb.org/3/movie/{movie_id}/release_dates"
+    response_certification = requests.get(url_certification, headers=headers)
+
+    #parsing the json data
+    data = response.json()
+    data_credits = response_credits.json()
+    data_certification = response_certification.json()
+    # print(data['cast'][0]['name'])
+    # #getting director
+    # for crew in data['crew']:
+    #     if crew['job'] == 'Director':
+    #         print(crew['name'])
+    title = data['title']
+    desc = data['overview']
+    img_url = 'https://image.tmdb.org/t/p/original' + data['poster_path']
+    backdrop_url = 'https://image.tmdb.org/t/p/original' + data['backdrop_path']
+
+    release_year = data['release_date']
+    # release_year.save()
+
+    available_genres = ['Action','Comedy','Drama','Horror','Romance','Thriller']
+    genre = ''
+    for i in data['genres']:
+        if i['name'] in available_genres:
+            genre = i['name']
+            break
+
+    #don't add comma for last iteration
+    cast = ''
+    for i in range(3):
+        cast += data_credits['cast'][i]['name']
+        if i != 2:
+            cast += ', '
+
+    director = ''
+    for crew in data_credits['crew']:
+        if crew['job'] == 'Director':
+            director = crew['name']
+            break
+
+    #rating upto one decimal place
+    rating = data['vote_average']
+    rating = round(rating,1)
+
+    available_certifications = ['U','U/A','A']
+    certification = ''
+    for i in data_certification['results']:
+        if i['iso_3166_1'] == 'IN':
+            for j in i['release_dates']:
+                if j['certification'] in available_certifications:
+                    certification = j['certification']
+                    break
+            break
+    if certification == '':
+        certification = 'U/A'
+
+    #random between 200 and 500, and multiple of 50
+    rent_price = 50 * random.randint(4,10)
+
+    #random between rent price and double of rent price, and multiple of 50
+    buy_price = rent_price + 50 * random.randint(2,4)
+
+    #random between 5 and 10
+    rent_duration = random.randint(5,10)
+
+    #getting run time in form HH:MM:SS
+    runtime = data['runtime']
+    runtime = datetime.timedelta(minutes=runtime)
+
+    total_quantity = random.randint(10,15)
+
+    #creating movie object
+    movie = Movie(title=title, desc=desc, img_url=img_url, backdrop_url=backdrop_url, release_year=release_year, genre=genre, cast=cast, director=director, rating=rating, certification=certification, rent_price=rent_price, buy_price=buy_price, rent_duration=rent_duration,runtime = runtime, total_quantity=total_quantity, available_quantity = total_quantity)
+    movie.save()
+
+
+    # printing the data first
+    print(title)
+    print(desc)
+    print(img_url)
+    print(backdrop_url)
+    # print(release_year)
+    print(genre)
+    print(cast)
+    print(director)
+    print(rating)
+    print(certification)
+    print(rent_price)
+    print(buy_price)
+    print(rent_duration)
+    # print(runtime)
+    print(total_quantity)
+
+
+# movie_id = 157336
+# get_movie_data(movie_id)
+
+
