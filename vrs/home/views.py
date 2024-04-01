@@ -324,7 +324,7 @@ def similar_movies(similar,movie,n=4):
     for m in movies:
         if len(similar_movies) == n:
             break
-        if m.id!=movie.id and m.genre == movie.genre and m not in similar:
+        if m.id!=movie.id and m.genre == movie.genre and m not in similar and m not in similar_movies:
             if m.director == movie.director:
                 similar_movies.append(m)
             else:
@@ -336,7 +336,7 @@ def similar_movies(similar,movie,n=4):
     for m in movies:
         if len(similar_movies) == n:
             break
-        if m.id!=movie.id and m not in similar:
+        if m.id!=movie.id and m not in similar and m not in similar_movies:
             if m.director == movie.director:
                 similar_movies.append(m)
             else:
@@ -349,7 +349,7 @@ def similar_movies(similar,movie,n=4):
         if len(similar_movies) == n:
             break
         if m.id != movie.id:
-            if (m.genre == movie.genre and m not in similar):
+            if (m.genre == movie.genre and m not in similar and m not in similar_movies):
                 similar_movies.append(m)
     return similar_movies
 
@@ -442,7 +442,6 @@ def add_to_cart(request,id):
         # alert the user that the movie is already in the cart
         messages.warning(request, 'Movie already in cart!')
         pass
-    print(all_cart_items)
     return redirect('/movie/'+str(id))
 
 # Remove from Cart
@@ -521,7 +520,6 @@ def payment(request):
         for order in all_order:
             invoice.order.add(order)
             invoice.save()
-        print("Invoice ID: ",invoice.invoice_id)
         return redirect('/home') 
     return render(request,'payment.html')    
 
@@ -676,7 +674,6 @@ def stafforder(request,id):
 def stafforderupdate(request, id):
     if request.method == 'POST':
         status = request.POST.get('status')
-        print(status)
         order = Order.objects.filter(order_id=id)[0]
         order.status = status
         order.save()
@@ -694,7 +691,6 @@ class GeneratePdf(View):
         #finding total price
         with_out_tax = invoice.total_price/1.18
         tax = invoice.total_price - with_out_tax
-        print(orders)
         params = {'invoice_id':8, 'orders':orders, 'invoice':invoice, 'with_out_tax':with_out_tax, 'tax':tax}
         open('templates/temp.html', "w").write(render_to_string('invoice.html', params))
         pdf = html_to_pdf('temp.html')

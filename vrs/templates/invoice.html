@@ -12,6 +12,7 @@
             padding: 0;
             background-color: #f2f2f2;
             color: #000;
+            font-size: 1.5rem;
         }
         h3 {
             text-align: center;
@@ -80,7 +81,7 @@
         <h4 class="two">{{invoice.invoice_date}}</h4>
 
         <div class="one">
-          <table width="300">
+          <table width="450">
             <thead>
                 <tr>
             <th align="left" class="heading">Movie</th>
@@ -94,14 +95,14 @@
           <tr>
             <th align="left" class="each">{{order.movie.title}}</th>
             <th class="each">
-                {% if order.movie.isrented == 0 %}
+                {% if order.isrented == 0 %}
                     Buy
                     {% else %}
                     Rent
                     {% endif %}
             </th>
             <th class="each" align = "right">
-              Rs.{% if item.isrented == 0 %}
+              Rs.{% if order.isrented == 0 %}
                   {{order.movie.buy_price}}
                   {% else %}
                   {{order.movie.rent_price}}
