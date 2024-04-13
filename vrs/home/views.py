@@ -11,9 +11,11 @@ from random import shuffle
 from home.models import Cart_Item
 from home.models import Order
 from home.models import Invoice
+from home.models import Monthly_Sale
 from django.utils import timezone
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+
 
 from io import BytesIO
 from django.http import HttpResponse
@@ -469,16 +471,36 @@ def payment(request):
         total_price = 0
         invoice = Invoice(total_price=total_price)
         invoice.save()
+
+        #updating monthly sale
+        sale = Monthly_Sale.objects.filter(month=timezone.now().strftime('%B'), year=timezone.now().year)
+        if len(sale)==0:
+            sale = Monthly_Sale(month=timezone.now().strftime('%B'),year=timezone.now().year)
+            sale.save()
+        else:
+            sale = sale[0]
         for item in cart_items:
             if item.isrented:
                 price = item.movie.rent_price
                 status = 'Not Returned'
                 due_date = timezone.now() + timezone.timedelta(days=item.movie.rent_duration)
+                sale.movies_rented += 1
+                if item.movie.title in sale.rented_movies:
+                    sale.rented_movies[item.movie.title] += 1
+                else:
+                    sale.rented_movies[item.movie.title] = 1
+
             else:
                 price = item.movie.buy_price
                 item.movie.total_quantity -= 1
                 status = 'Sold'
                 due_date = None
+                sale.movies_sold += 1
+                if item.movie.title in sale.sold_movies:
+                    sale.sold_movies[item.movie.title] += 1
+                else:
+                    sale.sold_movies[item.movie.title] = 1
+
             price *= 1.18
             total_price += price
             order = Order(user=user,movie=item.movie,isrented=item.isrented,total_price=price,order_date=timezone.now(), due_date=due_date, status = status, invoice_id = invoice.invoice_id)
@@ -489,6 +511,8 @@ def payment(request):
             item.delete()
         invoice.total_price = total_price
         invoice.save()
+        sale.total_sales += total_price
+        sale.save()
         for order in all_order:
             invoice.order.add(order)
             invoice.save()

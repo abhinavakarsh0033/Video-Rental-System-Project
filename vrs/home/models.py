@@ -6,6 +6,7 @@ from datetime import timedelta
 from django.db.models.fields import DurationField
 #importing pillow
 from PIL import Image
+from django.utils import timezone
 
  
 # Create your models here.
@@ -75,3 +76,18 @@ class Invoice(models.Model):
     total_price = models.FloatField()
     def __str__(self):
         return 'Invoice Id ' + str(self.invoice_id) + ' | ' +  str(self.invoice_date.date()) + ', ' + str(self.invoice_date.hour) + ':' + str(self.invoice_date.minute) + ':' + str(self.invoice_date.second)
+    
+class Monthly_Sale(models.Model):
+    month = models.CharField(max_length=100,choices=[('January','January'),('February','February'),('March','March'),('April','April'),('May','May'),('June','June'),('July','July'),('August','August'),('September','September'),('October','October'),('November','November'),('December','December')],default=timezone.now().strftime('%B'))
+    #default year is the current year
+    year = models.IntegerField(default=timezone.now().year)
+    movies_sold = models.IntegerField(default=0)
+    movies_rented = models.IntegerField(default=0)
+    total_sales = models.FloatField(default=0)
+
+    #movie object and quantity sold and rented
+    rented_movies = models.JSONField(default=dict)
+    sold_movies = models.JSONField(default=dict)
+
+    def __str__(self):
+        return self.month + ' ' + str(self.year)
