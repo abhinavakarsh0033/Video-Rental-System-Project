@@ -7,13 +7,16 @@ from home.models import Invoice
 
 
 # Register your models here.
-admin.site.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    readonly_fields = ('user','phone','dob','gender')
+admin.site.register(UserProfile,UserProfileAdmin)
+
 admin.site.register(Movie)
-admin.site.register(Cart_Item)
-# admin.site.register(Order)
 
 class OrderAdmin(admin.ModelAdmin):
-    readonly_fields = ('order_id','order_date')
-
+    readonly_fields = ('due_date','user','movie','total_price','isrented','invoice_id','order_date')
 admin.site.register(Order,OrderAdmin)
-admin.site.register(Invoice)
+
+class InvoiceAdmin(admin.ModelAdmin):
+    readonly_fields = ('invoice_id','invoice_date','total_price','order')
+admin.site.register(Invoice,InvoiceAdmin)

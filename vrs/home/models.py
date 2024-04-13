@@ -74,4 +74,4 @@ class Invoice(models.Model):
     invoice_date = models.DateTimeField(auto_now_add=True)
     total_price = models.FloatField()
     def __str__(self):
-        return str(self.order)
+        return 'Invoice Id ' + str(self.invoice_id) + ' | ' +  str(self.invoice_date.date()) + ', ' + str(self.invoice_date.hour) + ':' + str(self.invoice_date.minute) + ':' + str(self.invoice_date.second)
