@@ -287,12 +287,16 @@ def thriller(request):
 
 # Search Movies
 def search(request):
-    query = request.GET.get('search')
+    # Remove whiespaces from a string
+    def remove(s):
+        return s.replace(' ','')
+    original_query = request.GET.get('search')
+    query = remove(original_query)
     allMovies = Movie.objects.all()
     movies = []
     for movie in allMovies:
         # Check if query substring is present in title, genre or cast
-        if query.lower() in movie.title.lower() or query.lower() in movie.genre.lower() or query.lower() in movie.cast.lower():
+        if query.lower() in remove(movie.title.lower()) or query.lower() in remove(movie.genre.lower()) or query.lower() in remove(movie.cast.lower()):
             movies.append(movie)
     moviesets = []
     set4 = []
@@ -302,7 +306,7 @@ def search(request):
             moviesets.append(set4)
             set4 = []
     moviesets.append(set4)
-    params = {'moviesets':moviesets, 'title':'Search Results', 'heading':"Search Results for '"+query+"'"}
+    params = {'moviesets':moviesets, 'title':'Search Results', 'heading':"Search Results for '"+original_query+"'"}
     return render(request,'display.html',params)
 
 # Movie Page
