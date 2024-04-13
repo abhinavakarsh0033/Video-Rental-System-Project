@@ -63,6 +63,7 @@ Orders
                       <td class="border-0 align-middle">{{order.order_date}}</td>
                       <td class="border-0 align-middle">{{order.due_date}}</td>
                       <td class="border-0 align-middle">
+                        <a href="/staff/order/{{order.order_id}}">
                         {% if order.status == "Returned" %}
                         <h6 class="mb-0"><span class="badge bg-success"> {{order.status}}</span></h6>
                         {% elif order.status == "Not Returned" %}
@@ -72,9 +73,9 @@ Orders
                         {% else %}
                         <h6 class="mb-0"><span class="badge py-1 px-2" style ="background-color: #ff0022"> {{order.status}}</span></h6>
                         {% endif %}
+                      </a>
                       </td>
                       <td class="border-0 align-middle pl-4"><a href="/pdf/{{order.invoice_id}}" ><i class="fas fa-file-pdf" style="scale:1.2;"></i></a></td>
-
                     </tr>
                     {% endfor %}
                 </div>
