@@ -186,7 +186,7 @@
         {% for movie in i %}
         <div class="card">
         <a href="/movie/{{movie.id}}">
-            <img id="movieimage" src='{{movie.img_url}}' class="card-img-top" alt="no image" onerror="this.src='static/noposter.png';">
+            <img id="movieimage" src='{{movie.img_url}}' class="card-img-top" alt="no image" onerror="this.src='/static/noposter.png';">
         </a>
         <div class="card-body">
             <h5 class="card-title">{{movie.title}}</h5>

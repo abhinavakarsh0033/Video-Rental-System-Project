@@ -189,100 +189,56 @@ def signout(request):
     logout(request)
     return redirect('/')
 
-# Action Movies
-def action(request):
-    action_movies = Movie.objects.filter(genre='Action')
-    action_movies = list(action_movies)
-    shuffle(action_movies)
-    moviesets = []
-    set4 = []
-    for movie in action_movies:
-        set4.append(movie)
-        if len(set4)==4:
-            moviesets.append(set4)
-            set4 = []
-    moviesets.append(set4)
-    params = {'moviesets':moviesets, 'title':'Action Movies', 'heading':'Action Movies'}
-    return render(request,'display.html',params)
+def discover(request,genre,type):
+    genre = genre.capitalize()
+    movies = Movie.objects.filter(genre=genre)
+    if genre=='All':
+        movies = Movie.objects.all()
+        genre = 'Discover'
+    movies = list(movies)
 
-# Comedy Movies
-def comedy(request):
-    comedy_movies = Movie.objects.filter(genre='Comedy')
-    comedy_movies = list(comedy_movies)
-    shuffle(comedy_movies)
+    #sort by title (a-z) ignore case
+    if type == 1:
+        movies = sorted(movies, key=lambda x: x.title.lower())
+    #sort by title (z-a) ignore case
+    elif type == 2:
+        movies = sorted(movies, key=lambda x: x.title.lower(), reverse=True)
+    #sort by release year (new to old)
+    elif type == 3:
+        movies = sorted(movies, key=lambda x: x.release_year, reverse=True)
+    #sort by release year (old to new)
+    elif type == 4:
+        movies = sorted(movies, key=lambda x: x.release_year)
+    #sort by rating (high to low)
+    elif type == 5:
+        movies = sorted(movies, key=lambda x: x.rating, reverse=True)
+    #sort by rating (low to high)
+    elif type == 6:
+        movies = sorted(movies, key=lambda x: x.rating)
+    #sort by buy price (high to low), if buy price is same then sort by rent price (high to low)
+    elif type == 7:
+        movies = sorted(movies, key=lambda x: (x.buy_price, x.rent_price), reverse=True)
+    #sort by buy price (low to high), if buy price is same then sort by rent price (low to high)
+    elif type == 8:
+        movies = sorted(movies, key=lambda x: (x.buy_price, x.rent_price))
+    #shuffle
+    else:
+        shuffle(movies)
+    
     moviesets = []
     set4 = []
-    for movie in comedy_movies:
+    for movie in movies:
         set4.append(movie)
         if len(set4)==4:
             moviesets.append(set4)
             set4 = []
     moviesets.append(set4)
-    params = {'moviesets':moviesets, 'title':'Comedy Movies', 'heading':'Comedy Movies'}
-    return render(request,'display.html',params)
-
-# Drama Movies
-def drama(request):
-    drama_movies = Movie.objects.filter(genre='Drama')
-    drama_movies = list(drama_movies)
-    shuffle(drama_movies)
-    moviesets = []
-    set4 = []
-    for movie in drama_movies:
-        set4.append(movie)
-        if len(set4)==4:
-            moviesets.append(set4)
-            set4 = []
-    moviesets.append(set4)
-    params = {'moviesets':moviesets, 'title':'Drama Movies', 'heading':'Drama Movies'}
-    return render(request,'display.html',params)
-
-# Horror Movies
-def horror(request):
-    horror_movies = Movie.objects.filter(genre='Horror')
-    horror_movies = list(horror_movies)
-    shuffle(horror_movies)
-    moviesets = []
-    set4 = []
-    for movie in horror_movies:
-        set4.append(movie)
-        if len(set4)==4:
-            moviesets.append(set4)
-            set4 = []
-    moviesets.append(set4)
-    params = {'moviesets':moviesets, 'title':'Horror Movies', 'heading':'Horror Movies'}
-    return render(request,'display.html',params)
-
-# Romance Movies
-def romance(request):
-    romance_movies = Movie.objects.filter(genre='Romance')
-    romance_movies = list(romance_movies)
-    shuffle(romance_movies)
-    moviesets = []
-    set4 = []
-    for movie in romance_movies:
-        set4.append(movie)
-        if len(set4)==4:
-            moviesets.append(set4)
-            set4 = []
-    moviesets.append(set4)
-    params = {'moviesets':moviesets, 'title':'Romance Movies', 'heading':'Romance Movies'}
-    return render(request,'display.html',params)
-
-# Thriller Movies
-def thriller(request):
-    thriller_movies = Movie.objects.filter(genre='Thriller')
-    thriller_movies = list(thriller_movies)
-    shuffle(thriller_movies)
-    moviesets = []
-    set4 = []
-    for movie in thriller_movies:
-        set4.append(movie)
-        if len(set4)==4:
-            moviesets.append(set4)
-            set4 = []
-    moviesets.append(set4)
-    params = {'moviesets':moviesets, 'title':'Thriller Movies', 'heading':'Thriller Movies'}
+    if genre == 'Discover':
+        genre_name = 'all'
+    else:
+        genre_name = genre.lower()
+    
+    params = {'moviesets':moviesets, 'title':f'{genre} Movies', 'heading':f'{genre} Movies', 'type':type, 'genre':genre_name.lower()}
     return render(request,'display.html',params)
 
 # Search Movies
@@ -303,7 +259,7 @@ def search(request):
             set4 = []
     moviesets.append(set4)
     params = {'moviesets':moviesets, 'title':'Search Results', 'heading':"Search Results for '"+query+"'"}
-    return render(request,'display.html',params)
+    return render(request,'search.html',params)
 
 # Movie Page
 def movie(request,id):
