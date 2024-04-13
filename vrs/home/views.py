@@ -133,7 +133,7 @@ def home(request):
                 break
     else:
         similar = movies
-        shuffle(similar)
+    shuffle(similar)
     recommendations = []
     set5 = []
     for m in similar:
@@ -192,6 +192,8 @@ def signout(request):
 # Action Movies
 def action(request):
     action_movies = Movie.objects.filter(genre='Action')
+    action_movies = list(action_movies)
+    shuffle(action_movies)
     moviesets = []
     set4 = []
     for movie in action_movies:
@@ -206,6 +208,8 @@ def action(request):
 # Comedy Movies
 def comedy(request):
     comedy_movies = Movie.objects.filter(genre='Comedy')
+    comedy_movies = list(comedy_movies)
+    shuffle(comedy_movies)
     moviesets = []
     set4 = []
     for movie in comedy_movies:
@@ -220,6 +224,8 @@ def comedy(request):
 # Drama Movies
 def drama(request):
     drama_movies = Movie.objects.filter(genre='Drama')
+    drama_movies = list(drama_movies)
+    shuffle(drama_movies)
     moviesets = []
     set4 = []
     for movie in drama_movies:
@@ -234,6 +240,8 @@ def drama(request):
 # Horror Movies
 def horror(request):
     horror_movies = Movie.objects.filter(genre='Horror')
+    horror_movies = list(horror_movies)
+    shuffle(horror_movies)
     moviesets = []
     set4 = []
     for movie in horror_movies:
@@ -248,6 +256,8 @@ def horror(request):
 # Romance Movies
 def romance(request):
     romance_movies = Movie.objects.filter(genre='Romance')
+    romance_movies = list(romance_movies)
+    shuffle(romance_movies)
     moviesets = []
     set4 = []
     for movie in romance_movies:
@@ -262,6 +272,8 @@ def romance(request):
 # Thriller Movies
 def thriller(request):
     thriller_movies = Movie.objects.filter(genre='Thriller')
+    thriller_movies = list(thriller_movies)
+    shuffle(thriller_movies)
     moviesets = []
     set4 = []
     for movie in thriller_movies:

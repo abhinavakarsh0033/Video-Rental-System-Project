@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}
-{{movie.title}}
+Profile
 {% endblock title %}
 {% block body %}
 <style>
@@ -30,7 +30,7 @@
     <div class="form-row">
       <div class="form-group col-md-5">
         <label for="inputCity">Phone</label>
-        <input type="tel" class="form-control" id="inputCity" name ="phone" placeholder="{{userprofile.phone}}">
+        <input type="phone" class="form-control" pattern="[6-9]\d{9}" title="Must be a valid phone number" id="inputCity" name ="phone" placeholder="{{userprofile.phone}}">
       </div>
       <div class="form-group col-md-4">
         <label for="inputZip">Date of birth</label>
