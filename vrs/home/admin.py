@@ -22,10 +22,14 @@ admin.site.register(Movie, MovieAdmin)
 
 class OrderAdmin(admin.ModelAdmin):
     readonly_fields = ('due_date','user','movie','total_price','isrented','invoice_id','order_date')
+    list_display = ('order_id','order_date','user','movie','total_price','status','due_date')
+    list_filter = ('status','order_date')
+    search_fields = ('user__username','user__first_name','user__last_name','user__email','movie__title')
 admin.site.register(Order,OrderAdmin)
 
 class InvoiceAdmin(admin.ModelAdmin):
     readonly_fields = ('invoice_id','invoice_date','total_price','order')
+    list_display = ('invoice_id','invoice_date','total_price')
 admin.site.register(Invoice,InvoiceAdmin)
 
 class Monthly_SaleAdmin(admin.ModelAdmin):
