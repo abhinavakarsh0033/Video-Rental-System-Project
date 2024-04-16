@@ -102,6 +102,8 @@ def home(request):
         user_movies.append(order.movie)
         if order.status == 'Not Returned' and order.due_date - timezone.now() < timezone.timedelta(days=2):
             messages.warning(request, 'Your order for '+order.movie.title+' is due in 2 days. Please return it on time to avoid any penalties.')
+        elif order.status == 'Overdue':
+            messages.error(request, 'Your order for '+order.movie.title+' is overdue. Please return it as soon as possible to avoid any penalties.')
 
     # Bestseller Movies (All)
     movies = Movie.objects.all()
@@ -254,7 +256,7 @@ def search(request):
     movies = []
     for movie in allMovies:
         # Check if query substring is present in title, genre or cast
-        if query.lower() in remove(movie.title.lower()) or query.lower() in remove(movie.genre.lower()) or query.lower() in remove(movie.cast.lower()):
+        if query.lower() in remove(movie.title.lower()) or query.lower() in remove(movie.genre.lower()) or query.lower() in remove(movie.cast.lower()) or query.lower() in remove(movie.director.lower()):
             movies.append(movie)
     moviesets = []
     set4 = []

@@ -74,8 +74,6 @@ class Invoice(models.Model):
     order = models.ManyToManyField(Order, related_name='orders')
     invoice_date = models.DateTimeField(auto_now_add=True)
     total_price = models.FloatField()
-    # def __str__(self):
-    #     return 'Invoice Id ' + str(self.invoice_id) + ' | ' +  str(self.invoice_date.date()) + ', ' + str(self.invoice_date.hour) + ':' + str(self.invoice_date.minute) + ':' + str(self.invoice_date.second)
     def __str__(self):
         return 'Invoice Id ' + str(self.invoice_id)
 
