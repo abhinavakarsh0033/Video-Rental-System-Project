@@ -1,3 +1,4 @@
+## Description
 Video Rental System(VRS) helps people in renting/buying the movies they like to watch. The
 system is an online video renting portal, which will be helpful not only for the customers to buy
 or rent movies but also staff to maintain the inventory. Basically, the customer will sign up and
@@ -7,18 +8,22 @@ customers can add the required movies to the cart, order and pay for the movies.
 the other hand makes sure the movies on demand are being stocked up frequently and
 customers do not cross the deadlines to return the movies back.
 
-To run the code:
+## Run the code
 
-Requirements:
+### Requirements:
+```bash
 pip install django
 pip install requests
 pip install django-mathfilters
 pip install xhtml2pdf
+```
 
-To Run:
+### To Run:
+```bash
 cd vrs
 python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
+```
 
 
